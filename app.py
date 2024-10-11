@@ -1,5 +1,5 @@
 from Tool import app, db, login_manager
-from Tool.models import User, Club
+from Tool.models import User, Club, Forum, Comment
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -90,7 +90,7 @@ def accept(uid, cid):
     club.requesters.remove(user)
     user.add_notification(f'You have been accepted to {club.name}')
     db.session.commit()
-    return redirect(url_for('test'))
+    return redirect(url_for('view_clubs'))
 
 
 @app.route('/reject/<uid>/<cid>', methods=['POST'])
@@ -124,7 +124,7 @@ def promote(uid, cid):
     club.managers.append(user)
     user.add_notification(f'You have been promoted to manager in {club.name}')
     db.session.commit()
-    return redirect(url_for('test'))
+    return redirect(url_for('view_clubs'))
 
 
 @app.route('/demote/<uid>/<cid>', methods=['POST'])
@@ -141,7 +141,7 @@ def demote(uid, cid):
     club.managers.remove(user)
     user.add_notification(f'You are no longer a manager in {club.name}')
     db.session.commit()
-    return redirect(url_for('test'))
+    return redirect(url_for('view_clubs'))
 
 
 @app.route('/remove/<uid>/<cid>', methods=['POST'])
@@ -162,7 +162,7 @@ def remove(uid, cid):
     
     user.add_notification(f'You are no longer a member of {club.name}')
     db.session.commit()
-    return redirect(url_for('test'))
+    return redirect(url_for('view_clubs'))
 
 
 @app.route('/leave/<cid>', methods=['POST'])
@@ -180,7 +180,7 @@ def leave(cid):
 
     current_user.add_notification(f'You have left {club.name}')
     db.session.commit()
-    return redirect(url_for('test'))
+    return redirect(url_for('view_clubs'))
 
 
 @app.route('/create-club', methods=['POST'])
@@ -197,17 +197,76 @@ def create_club():
 
 @app.route('/test')
 def test():
-    see()
+    see_forums()  # Corrected call
     return render_template('test.html')
 
 
-def see():
-    clubs = Club.query.all()
-    for i in clubs:
-        print(i)
-        print("MEMBERS", i.members)
-        print("Managers", i.managers)
-        print("requesters", i.requesters)\
+@app.route('/forums')
+@login_required
+def view_forums():
+    forums = Forum.query.all()
+    return render_template('forums.html', forums = forums)
+
+@app.route('/forum/<fid>')
+@login_required
+def view_forum(fid):
+    forum = db.session.get(Forum, fid)
+    if not forum:
+        # Handle case where forum does not exist
+        return "Forum not found", 404
+    comments = Comment.query.filter_by(forum_id=forum.id).all()
+    return render_template('forum.html', forum=forum, comments=comments)
+
+
+@app.route('/join-forum/<fid>', methods=['POST'])
+@login_required
+def join_forum(fid):
+    forum = db.session.get(Forum, fid)
+    if not forum:
+        return "Forum not found", 404
+    forum.members.append(current_user)
+    db.session.commit()
+    return redirect(url_for('view_forum', fid=fid))
+
+
+@app.route('/comment/<fid>', methods=['POST'])
+@login_required
+def comment(fid):
+    content = request.form['comment']
+    if not content:
+        return "Comment cannot be empty", 400
+    
+    comment = Comment(content=content, forum_id=fid, user_id=current_user.id)
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('view_forum', fid=fid))
+
+
+@app.route('/create-forum', methods=['GET', 'POST'])
+@login_required
+def create_forum():
+    if request.method == 'GET':
+        return render_template('create_forum.html')
+    elif request.method == 'POST':
+        name = request.form['name']
+        forum = Forum(name=name)
+        forum.members.append(current_user)
+        db.session.add(forum)
+        db.session.commit()
+        return redirect(url_for('view_forum', fid=forum.id))
+
+
+def see_forums():
+    forums = Forum.query.all()
+    for forum in forums:  # Corrected from 'for forum in forum'
+        print(forum.name)
+        print('Members:', forum.members)
+        print('Comments:', forum.comments)
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,5 @@
+users - id, name, club, golds, silvers, bronzes, total, forums, events, password, email
+clubs - id, name, participants, events pcpts, golds, silvers, bronzes, total
+events - id, name, host(club id), 1st, 2nd, 3rd, date
+forums - id, name/topic
+comments - id, forum/topic, user, datetime

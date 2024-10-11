@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Routes</title>
+</head>
+<body>
+    <h1>Test App Functionality</h1>
+
+    <!-- Register Form -->
+    <h2>Register</h2>
+    <h2>{{ current_user.name }}</h2>
+    <form action="{{ url_for('register') }}" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <input type="submit" value="Register">
+    </form>
+
+    <!-- Login Form -->
+    <h2>Login</h2>
+    <form action="{{ url_for('login') }}" method="POST">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <input type="submit" value="Login">
+    </form>
+
+    <!-- Create Club Form -->
+    <h2>Create Club</h2>
+    <form action="{{ url_for('create_club') }}" method="POST">
+        <label for="name">Club Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <input type="submit" value="Create Club">
+    </form>
+
+    <!-- Join Club Form (request to join a club) -->
+    <h2>Request to Join Club</h2>
+    <form action="{{ url_for('request_club', cid=2) }}" method="POST"> <!-- Replace cid=1 with a valid club ID -->
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Request to Join">
+    </form>
+
+    <!-- Accept User to Club -->
+    <h2>Accept User to Club</h2>
+    <form action="{{ url_for('accept', uid=2, cid=2) }}" method="POST"> <!-- Replace uid and cid with valid IDs -->
+        <label for="uid">User ID:</label>
+        <input type="number" id="uid" name="uid" required>
+        <br>
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Accept User">
+    </form>
+
+    <!-- Reject User from Club -->
+    <h2>Reject User from Club</h2>
+    <form action="{{ url_for('reject', uid=1, cid=1) }}" method="POST"> <!-- Replace uid and cid with valid IDs -->
+        <label for="uid">User ID:</label>
+        <input type="number" id="uid" name="uid" required>
+        <br>
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Reject User">
+    </form>
+
+    <!-- Promote User to Manager -->
+    <h2>Promote User to Manager</h2>
+    <form action="{{ url_for('promote', uid=2, cid=2) }}" method="POST"> <!-- Replace uid and cid with valid IDs -->
+        <label for="uid">User ID:</label>
+        <input type="number" id="uid" name="uid" required>
+        <br>
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Promote User">
+    </form>
+
+    <!-- Demote Manager -->
+    <h2>Demote Manager</h2>
+    <form action="{{ url_for('demote', uid=2, cid=2) }}" method="POST"> <!-- Replace uid and cid with valid IDs -->
+        <label for="uid">User ID:</label>
+        <input type="number" id="uid" name="uid" required>
+        <br>
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Demote Manager">
+    </form>
+
+    <!-- Remove User from Club -->
+    <h2>Remove User from Club</h2>
+    <form action="{{ url_for('remove', uid=2, cid=2) }}" method="POST"> <!-- Replace uid and cid with valid IDs -->
+        <label for="uid">User ID:</label>
+        <input type="number" id="uid" name="uid" required>
+        <br>
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Remove User">
+    </form>
+
+    <!-- Leave Club -->
+    <h2>Leave Club</h2>
+    <form action="{{ url_for('leave', cid=1) }}" method="POST"> <!-- Replace cid with a valid club ID -->
+        <label for="cid">Club ID:</label>
+        <input type="number" id="cid" name="cid" required>
+        <br>
+        <input type="submit" value="Leave Club">
+    </form>
+
+    <!-- Logout -->
+    <h2>Logout</h2>
+    <form action="{{ url_for('logout') }}" method="GET">
+        <input type="submit" value="Logout">
+    </form>
+
+</body>
+</html>

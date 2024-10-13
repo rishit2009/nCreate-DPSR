@@ -3,3 +3,23 @@ clubs - id, name, participants, events pcpts, golds, silvers, bronzes, total, ma
 events - id, name, host(club id), 1st, 2nd, 3rd, date
 forums - id, name/topic
 comments - id, forum/topic, user, datetime
+
+
+
+event page - display sub events, brochure, date times, register button.
+event page if alr done then results and submissions also
+manage-event - clubs registered, submissions, declare result option
+all events - display all events, button to view detaiils open the event specific page
+registration - per sub event, each sub event has the info icon which opens the description
+
+all forums - displays all forums , topic, no of messages, no of members
+forum spefic - messages from user with dp and time, like discord
+if user not joined forum, cant send msgs, join forum btn instead of msg box
+
+all clubs - name, no of members, no of golds, silvers, bronzes??
+club specific - name, dp, on left with quick stats like total events pcptd, medals won, gold won, silver won, bronze won, on right description at top, events pcptd - name, logo kinda, 5 most recent with option to see all, members - like dc 
+
+manage-club - view requesters, accept them, promote members, demote managers, change details like name , dp, description
+
+
+user profile - leetcode style

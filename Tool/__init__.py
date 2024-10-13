@@ -19,3 +19,4 @@ migrate = Migrate(app, db)  # Assign to a variable, though not strictly necessar
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+<!-- title -->
+{% block title %} Create Event {% endblock %}
+
+{% block content %}
+
+
+<form method="POST" action="/create-event">
+    <label for="event_name">Event Name:</label>
+    <input type="text" id="event_name" name="event_name" required>
+
+    <div id="sub_events">
+        <!-- Initial sub-event input fields -->
+        <div class="sub_event">
+            <label for="sub_event_name_1">Sub-Event Name:</label>
+            <input type="text" name="sub_event_name_1" required>
+            <label for="sub_event_participants_1">No. of Participants:</label>
+            <input type="number" name="sub_event_participants_1" required>
+        </div>
+    </div>
+
+    <button type="button" onclick="addSubEvent()">Add Another Sub-Event</button>
+    <button type="submit">Create Event</button>
+</form>
+
+<script>
+    let subEventCount = 1;
+
+    function addSubEvent() {
+        subEventCount++;
+        const subEventDiv = document.createElement('div');
+        subEventDiv.className = 'sub_event';
+        subEventDiv.innerHTML = `
+            <label for="sub_event_name_${subEventCount}">Sub-Event Name:</label>
+            <input type="text" name="sub_event_name_${subEventCount}" required>
+            <label for="sub_event_participants_${subEventCount}">No. of Participants:</label>
+            <input type="number" name="sub_event_participants_${subEventCount}" required>
+        `;
+        document.getElementById('sub_events').appendChild(subEventDiv);
+    }
+</script>
+
+
+
+{% endblock %}

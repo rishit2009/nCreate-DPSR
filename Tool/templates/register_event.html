@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+<!-- title -->
+{% block title %} Title {% endblock %}
+
+{% block content %}
+<h1>Register for Event: {{ event.name }}</h1>
+    
+    <form method="POST" action="/register-event/1">
+
+
+        <div>
+            <h3>Select Members to Register</h3>
+            <p>Club: {{ club.name }}</p>
+        </div>
+
+        <!-- Dynamically list the sub-events and participants selection -->
+        <div>
+            <h3>Sub-Events Registration</h3>
+            {% for sub_event in event.sub_events %}
+                <div class="sub-event-block">
+                    <h4>{{ sub_event.name }} ({{ sub_event.participant_count }} participants)</h4>
+                    <p>{{ sub_event.description }}</p>
+
+                    <!-- Create dropdowns based on the number of participants required -->
+                    {% for i in range(sub_event.participant_count) %}
+                        <label for="sub_event_{{ sub_event.id }}_participant_{{ i+1 }}">Participant {{ i+1 }}:</label>
+                        <select class="participant-select" name="sub_event_{{ sub_event.id }}_participant_{{ i+1 }}">
+                            <option value="">None</option>
+                            {% for member in club.members %}
+                                <option value="{{ member.id }}">{{ member.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br><br>
+                    {% endfor %}
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Submit Registration</button>
+    </form>
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Apply Select2 to all dropdowns
+        $(document).ready(function() {
+            $('.participant-select').select2({
+                placeholder: "Search for a participant",
+                allowClear: true
+            });
+        });
+    </script>
+
+home
+{% endblock %}

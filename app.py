@@ -1,6 +1,6 @@
 from Tool import app, db, login_manager
-from Tool.models import User, Club, Forum, Comment, Event, SubEvent, Submission
-from flask import render_template, request, redirect, url_for, flash
+from Tool.models import User, Club, Forum, Comment, Event, SubEvent, Submission, Skill
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 import os
 
@@ -23,6 +23,57 @@ def null_club():
     return 'Added successfully'
 
 
+@app.route('/_add-skills')
+def _add_skills():
+    skills = [
+    # Web Development
+    'HTML', 'CSS', 'JavaScript', 'React', 'Angular', 'Vue.js',
+    'Bootstrap', 'Tailwind CSS', 'TypeScript', 'Sass', 'jQuery',
+    'Webpack', 'Parcel', 'Node.js', 'Express.js', 'Django', 
+    'Flask', 'Ruby on Rails', 'PHP', 'Laravel', 'Spring Boot', 
+    'Go', 'Rust', 'SQL', 'NoSQL', 'MongoDB', 'Firebase', 
+    'MySQL', 'PostgreSQL',
+    
+    # Data Analysis
+    'Python', 'R', 'SQL', 'MATLAB', 'Pandas', 'NumPy', 'SciPy', 
+    'Matplotlib', 'Seaborn', 'TensorFlow', 'PyTorch', 'Scikit-learn', 
+    'Jupyter', 'Anaconda', 'Excel', 'PowerBI', 'Tableau', 'Google Analytics', 
+    'Hadoop', 'Apache Spark',
+
+    # Game Development
+    'C#', 'C++', 'Java', 'Python', 'Unity', 'Unreal Engine', 
+    'Godot', 'Blender', 'Maya', '3ds Max', 'Photoshop', 'Illustrator', 
+    'OpenGL', 'DirectX', 'Vulkan', 'WebGL',
+
+    # Competitive Programming
+    'C++', 'Python', 'Java', 'C', 'Go', 'Rust', 'Kotlin', 
+    'Swift', 'LeetCode', 'Codeforces', 'HackerRank', 'Git', 'GitHub',
+
+    # Video Editing
+    'Adobe Premiere Pro', 'Final Cut Pro', 'DaVinci Resolve', 
+    'After Effects', 'Video Transitions', 'Color Grading', 
+    'Motion Tracking', 'Audio Syncing', 'Storyboarding', 'Scriptwriting',
+
+    # Design (UI/UX, Graphic Design)
+    'Figma', 'Sketch', 'Adobe XD', 'InVision', 'Axure RP', 
+    'Balsamiq', 'Adobe Photoshop', 'Adobe Illustrator', 
+    'Adobe InDesign', 'Canva', 'CorelDRAW', 'Principle', 
+    'ProtoPie', 'Framer'
+]
+
+
+    for skill_name in skills:
+    # Check if the skill already exists
+        existing_skill = Skill.query.filter_by(name=skill_name).first()
+        if not existing_skill:
+            skill = Skill(name=skill_name)
+            db.session.add(skill)
+
+    db.session.commit()
+
+    return 'Success'
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
@@ -37,6 +88,24 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
+
+        selected_skills = request.form.getlist('skills')  # Get the list of skills (both existing and new)
+
+        for skill_data in selected_skills:
+            # If it's a number, it's an existing skill ID
+            if skill_data.isdigit():
+                skill = db.session.get(Skill, int(skill_data))
+            else:
+                # If not, it's a new skill (by name)
+                skill = Skill.query.filter_by(name=skill_data).first()
+                if not skill:
+                    # Add new skill to the database if it doesn't exist
+                    skill = Skill(name=skill_data)
+                    db.session.add(skill)
+                    db.session.commit()
+            
+            new_user.skills.append(skill)
+
 
         if 'profile_pic' not in request.files:
             flash('No file part')
@@ -89,7 +158,7 @@ def logout():
 def user_profile(uid):
     user = db.session.get(User, uid)
     club = db.session.get(Club, user.club_id)
-    print(user.profile_pic)
+    print(user.skills)
     return render_template('user.html', user = user, club = club)
 
 
@@ -470,7 +539,7 @@ def submit(eid, sid):
 def declare_result(eid):
     event = db.session.get(Event, eid)
     if request.method == 'GET':
-        return render_template('declare_reesult.html')
+        return render_template('declare_result.html')
     elif request.method == 'POST':
         club = db.session.get(Club, current_user.club_id)
         if current_user.club_id != event.host_id:
@@ -493,6 +562,11 @@ def declare_result(eid):
 
             for user in first_users:
                 user.add_notification(f'Congratulations! You have won 1st position in {sub_event.name} at {event.name}')
+                user.won_sub_events.append({
+                'sub_event_id': sub_event.id,
+                'position': 1
+                })
+
 
             # Notify the second place users
             second_users = User.query.filter(
@@ -502,6 +576,10 @@ def declare_result(eid):
 
             for user in second_users:
                 user.add_notification(f'Congratulations! You have won 2nd position in {sub_event.name} at {event.name}')
+                user.won_sub_events.append({
+                'sub_event_id': sub_event.id,
+                'position': 2
+                })
 
             # Notify the third place users
             third_users = User.query.filter(
@@ -511,6 +589,10 @@ def declare_result(eid):
 
             for user in third_users:
                 user.add_notification(f'Congratulations! You have won 3rd position in {sub_event.name} at {event.name}')
+                user.won_sub_events.append({
+                'sub_event_id': sub_event.id,
+                'position': 3
+                })
 
             db.session.commit()
 
@@ -519,6 +601,12 @@ def declare_result(eid):
 
         return redirect(url_for('index'))
             
+
+@app.route('/search_skills')
+def search_skills():
+    query = request.args.get('q')
+    skills = Skill.query.filter(Skill.name.ilike(f'%{query}%')).all()
+    return jsonify([{'id': skill.id, 'name': skill.name} for skill in skills])
 
 
 

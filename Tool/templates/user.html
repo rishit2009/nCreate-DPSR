@@ -20,7 +20,7 @@
         <h1 class="text-3xl font-bold text-text">{{ user.name }}</h1>
         {% if user in club.managers %}
             <p class="text-text">Manager @ {{ club.name }}</p>
-        {% else %}
+        {% elif club.name != 'null' %}
         <p class="text-text">Member @ {{ club.name }}</p>
          {% endif %}
         
@@ -40,10 +40,9 @@
   <div class="mb-6">
     <h2 class="text-2xl font-semibold mb-2 text-text">Skills</h2>
     <div class="flex flex-wrap">
-      <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">JavaScript</span>
-      <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">React</span>
-      <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">Node.js</span>
-      <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">Python</span>
+      {% for skill in user.skills %}
+        <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">{{ skill.name }}</span>
+      {% endfor %}
     </div>
   </div>
 <!-- Prizes -->
@@ -71,6 +70,16 @@
       <li><strong>Email:</strong> {{ user.email }}</li>
     </ul>
   </div>
+
+
+  {% if current_user.id == user.id %} 
+  <div>
+    <a class="flex gap-2 my-4 text-red-600 items-center" href="{{url_for('logout')}}">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Logout
+    </a>
+  </div>
+  {% endif %}
 
 
 

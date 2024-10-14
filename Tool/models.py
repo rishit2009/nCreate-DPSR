@@ -50,6 +50,20 @@ sub_event_club_registrations = db.Table('sub_event_club_registrations',
     db.Column('sub_event_id', db.Integer, db.ForeignKey('sub_event.id'))
 )
 
+# Association table between users and sub-events with a 'position' column
+user_sub_event_positions = db.Table('user_sub_event_positions',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('sub_event_id', db.Integer, db.ForeignKey('sub_event.id'), primary_key=True),
+    db.Column('position', db.Integer, nullable=False)  # 1 = first, 2 = second, 3 = third
+)
+
+user_skills = db.Table('user_skills',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('skill_id', db.Integer, db.ForeignKey('skill.id'), primary_key=True)
+)
+
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -85,6 +99,10 @@ class User(db.Model, UserMixin):
 
     registered_sub_events = db.relationship('SubEvent', secondary=sub_event_registrations, back_populates='registered_users')
 
+    won_sub_events = db.relationship('SubEvent', secondary=user_sub_event_positions, back_populates='winning_users')
+
+
+    skills = db.relationship('Skill', secondary=user_skills, back_populates='users')
 
     profile_pic = db.Column(db.String(200), nullable=False)
 
@@ -118,6 +136,18 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<User {self.name}-{self.id} in club {self.club_id}>'
+    
+
+class Skill(db.Model):
+    __tablename__ = 'skill'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+
+    users = db.relationship('User', secondary=user_skills, back_populates='skills')
+
+    def __repr__(self):
+        return f'<Skill {self.name}>'
+
 
 # Club model
 class Club(db.Model):
@@ -182,16 +212,24 @@ class Event(db.Model):
     def __repr__(self):
         return f'<Event {self.name}>'
     
-
 class SubEvent(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     participant_count = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable=False)
+
+    # New column to determine if the sub-event is online, offline, or hybrid
+    event_type = db.Column(db.Enum('online', 'offline', 'hybrid', name='event_type_enum'), nullable=False)
+
+    # New column to determine if the sub-event is submission-based
+    is_submission_based = db.Column(db.Boolean, default=False, nullable=False)
+
     registered_users = db.relationship('User', secondary=sub_event_registrations, back_populates='registered_sub_events')
     submissions = db.relationship('Submission', back_populates='sub_event')
     registered_clubs = db.relationship('Club', secondary=sub_event_club_registrations, back_populates='registered_sub_events')
+    winning_users = db.relationship('User', secondary=user_sub_event_positions, back_populates='won_sub_events')
 
     # Foreign keys for 1st, 2nd, and 3rd place clubs
     first_place_club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=True)
@@ -203,6 +241,8 @@ class SubEvent(db.Model):
     second_place_club = db.relationship('Club', foreign_keys=[second_place_club_id], backref='won_second_place_sub_events')
     third_place_club = db.relationship('Club', foreign_keys=[third_place_club_id], backref='won_third_place_sub_events')
 
+    def __repr__(self):
+        return f'<SubEvent {self.name}, Type: {self.event_type}, Submission-based: {self.is_submission_based}>'
 
 
 # Submission model: linking clubs, sub-events, and submission links

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Declare Results</title>
+</head>
+<body>
+    <h1>Declare Results for {{ event.name }}</h1>
+
+    <form method="POST">
+        <div>
+            {% for sub_event in event.sub_events %}
+                <h3>{{ sub_event.name }}</h3>
+                
+                <!-- First Place Club -->
+                <label for="sub_event_{{ sub_event.id }}_first">First Place:</label>
+                <select name="sub_event_{{ sub_event.id }}_first" id="sub_event_{{ sub_event.id }}_first" required>
+                    <option value="" disabled selected>Select First Place Club</option>
+                    {% for club in sub_event.registered_clubs %}
+                        <option value="{{ club.id }}">{{ club.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <!-- Second Place Club -->
+                <label for="sub_event_{{ sub_event.id }}_second">Second Place:</label>
+                <select name="sub_event_{{ sub_event.id }}_second" id="sub_event_{{ sub_event.id }}_second" required>
+                    <option value="" disabled selected>Select Second Place Club</option>
+                    {% for club in sub_event.registered_clubs %}
+                        <option value="{{ club.id }}">{{ club.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <!-- Third Place Club -->
+                <label for="sub_event_{{ sub_event.id }}_third">Third Place:</label>
+                <select name="sub_event_{{ sub_event.id }}_third" id="sub_event_{{ sub_event.id }}_third" required>
+                    <option value="" disabled selected>Select Third Place Club</option>
+                    {% for club in sub_event.registered_clubs %}
+                        <option value="{{ club.id }}">{{ club.name }}</option>
+                    {% endfor %}
+                </select>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Submit Results</button>
+    </form>
+
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

@@ -1,38 +1,84 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
-<!-- title -->
-{% block title %} Register {% endblock %}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-{% block content %}
-<h1>Register</h1>
-<form method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" class="mx-auto">
-    <div>
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
-    </div>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    <div>
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-    </div>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <div>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-    </div>
+</head>
+<body>
+    <h1>Register</h1>
+    <form method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" class="mx-auto">
+        <div>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+        </div>
 
-    <div>
-        <label for="profile_pic">Profile Picture:</label><br>
-        <input type="file" id="profile_pic" name="profile_pic" accept="image/*"><br><br>
-    </div>
+        <div>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+        </div>
 
-    <div>
-        <label for="description">Description:</label><br>
-        <textarea id="description" name="description" required></textarea><br><br>
-    </div>
+        <div>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+        </div>
 
-    <div>
-        <input type="submit" value="Register">
-    </div>
-</form>
-{% endblock %}
+        <label for="skills">Skills:</label>
+        <select class="form-control" id="skills" name="skills" multiple="multiple" style="width: 200px;"></select>
+
+        <div>
+            <label for="profile_pic">Profile Picture:</label><br>
+            <input type="file" id="profile_pic" name="profile_pic" accept="image/*"><br><br>
+        </div>
+
+        <div>
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description" required></textarea><br><br>
+        </div>
+
+        <div>
+            <input type="submit" value="Register">
+        </div>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $('#skills').select2({
+                tags: true,  // Allows creation of new skills
+                tokenSeparators: [','],
+                ajax: {
+                    url: '/search_skills',  // Endpoint for fetching existing skills
+                    dataType: 'json',
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function(skill) {
+                                return { id: skill.id, text: skill.name };
+                            })
+                        };
+                    }
+                },
+                createTag: function(params) {
+                    // Return the new skill name as is, not as an object
+                    return {
+                        id: params.term,
+                        text: params.term,
+                        newTag: true  // Flag to indicate it's a new skill
+                    };
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>

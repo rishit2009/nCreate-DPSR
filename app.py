@@ -17,7 +17,7 @@ def index():
 
 @app.route('/null-club')
 def null_club():
-    nc = Club(name='null')
+    nc = Club(name='null', description = 'null')
     db.session.add(nc)
     db.session.commit()
     return 'Added successfully'
@@ -31,25 +31,35 @@ def register():
         name = request.form['name']
         email = request.form['email']
         passw = request.form['password']
+        desc = request.form['description']
 
-        new_user = User(name=name, email=email, password=passw)
+        new_user = User(name=name, email=email, password=passw, description = desc)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
 
-        if 'file' not in request.files:
+        if 'profile_pic' not in request.files:
             flash('No file part')
+            print('No file part')
+            print('Request files:', request.files)
             return redirect(request.url)
-        file = request.files['file']
+
+        file = request.files['profile_pic']
+    
         if file.filename == '':
             flash('No selected file')
+            print('No selected file')
             return redirect(request.url)
+
         if file and allowed_file(file.filename):
-            filename = new_user.id
-            filepath = os.path.join('static/images/users', filename)
+        # Assuming you want to use the user's ID for the filename
+            filename = f"{new_user.id}.{file.filename.rsplit('.', 1)[1].lower()}"  # Adjust extension as needed
+            filepath = ('Tool/static/images/users/'+ filename)
             file.save(filepath)
-            new_user.profile_pic = filepath
+
+            new_user.profile_pic = '../static/images/users/' + filename  # Save the file path to the user's profile
             db.session.commit()
+
             
         return redirect(url_for('index'))
 
@@ -72,6 +82,15 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/user/<uid>')
+@login_required
+def user_profile(uid):
+    user = db.session.get(User, uid)
+    club = db.session.get(Club, user.club_id)
+    print(user.profile_pic)
+    return render_template('user.html', user = user, club = club)
 
 
 @app.route('/clubs')

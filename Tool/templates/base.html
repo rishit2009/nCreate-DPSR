@@ -3,12 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              text: '#f7f3ec',
+              background: '#130f07',
+              primary: '#eb0037',
+              secondary: '#0a9682',
+              accent: '#510b1c',
+            },
+          },
+        },
+      }
+    </script>
+    <script src="../static/js/script.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
     <nav>
-        
+        <header class="header" id="header">
+            <nav class="nav container">
+               <a href="#" class="nav__logo">Logo</a>
+   
+               <div class="nav__menu" id="nav-menu">
+                  <ul class="nav__list">
+                     <li class="nav__item">
+                        <a href="#" class="nav__link">
+                           <i class="ri-arrow-right-up-line"></i>
+                           <span>Home</span>
+                        </a>
+                     </li>
+   
+                     <li class="nav__item">
+                        <a href="#" class="nav__link">
+                           <i class="ri-arrow-right-up-line"></i>
+                           <span>About Us</span>
+                        </a>
+                     </li>
+   
+                     <li class="nav__item">
+                        <a href="#" class="nav__link">
+                           <i class="ri-arrow-right-up-line"></i>
+                           <span>Projects</span>
+                        </a>
+                     </li>
+   
+                     <li class="nav__item">
+                        <a href="#" class="nav__link">
+                           <i class="ri-arrow-right-up-line"></i>
+                           <span>Studio</span>
+                        </a>
+                     </li>
+   
+                     <li class="nav__item">
+                        <a href="#" class="nav__link">
+                           <i class="ri-arrow-right-up-line"></i>
+                           <span>Contact</span>
+                        </a>
+                     </li>
+   
+                     <!-- Notification bell -->
+                     <li class="nav__item hello-bye">
+                        <a href="#" class="nav__link">
+                           <ion-icon name="notifications-outline"></ion-icon>
+                        </a>
+                     </li>
+   
+                     <!-- User profile -->
+                     <li class="nav__item hello-bye">
+                        <a href="#" class="nav__link">
+                           <ion-icon name="person-circle-outline"></ion-icon>
+                        </a>
+                     </li>
+                  </ul>
+   
+                  <!-- Close button -->
+                  <div class="nav__close" id="nav-close">
+                     <i class="ri-close-large-line"></i>
+                  </div>
+               </div>
+   
+               <!-- Toggle button -->
+               <div class="nav__toggle" id="nav-toggle">
+                  <i class="ri-menu-line"></i>
+               </div>
+            </nav>
+         </header>
     </nav>
+
 
     {% block content %}
     {% endblock %}

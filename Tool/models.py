@@ -90,10 +90,11 @@ class User(db.Model, UserMixin):
 
     description = db.Column(db.String, nullable = False)
 
-    def __init__(self, name, email, password,profile_pic = '/Tool/static/images/default.jpg', golds=0, silvers=0, bronzes=0, club_id=1):
+    def __init__(self, name, email, password, description,profile_pic = '/Tool/static/images/default.jpg', golds=0, silvers=0, bronzes=0, club_id=1):
         self.name = name
         self.email = email
         self.password_hash = generate_password_hash(password)  # Hashing the password
+        self.description = description
         self.golds = golds
         self.silvers = silvers
         self.bronzes = bronzes

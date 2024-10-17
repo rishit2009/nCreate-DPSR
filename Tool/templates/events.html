@@ -1,10 +1,35 @@
 {% extends 'base.html' %}
 
 <!-- title -->
-{% block title %} Title {% endblock %}
+{% block title %} Events List {% endblock %}
 
 {% block content %}
-<!-- html stuff here -->
+    <h1 class="bold text-3xl my-4 mb-10 text-text ml-12">Events</h1>
+    <div class="flex flex-col gap-6 items-start max-w-screen overflow-x-hidden">
+        {% for ev in events %}
+        <a class="flex justify-between  items-center text-text hover:scale-[1.01] py-4 w-[90%] border-b border-gray-400 mx-[5%] px-8 transition-all" href="{{ url_for('event', eid=ev.id) }}">
+            <div class="flex">
+                <img src="{{ ev.profile_pic }}" alt="{{ ev.name }}" class="h-14 w-14 rounded-full mr-6">
+                <div class="flex flex-col">
+                    <p class="font-bold text-xl">{{ ev.name }}</p>
+                    <p class="text-sm text-slate-400 cursor-pointer hover:underline" onclick="toclub(ev.host.id)">
+                        Hosted by: {{ ev.host.name }}
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="flex text-right flex-col text-slate-300 text-sm ml-8">
+                <span>Event Date: {{ ev.event_date.strftime('%d %b %Y') if ev.event_date else 'TBA' }}</span>
+                <span>Reg. End: {{ ev.registration_end_date.strftime('%d %b %Y') if ev.registration_end_date else 'TBA' }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 
-home
+    <script>
+        function toclub(cid) {
+            window.location.href = `{{url_for('club', cid = cid)}}`;
+            console.log('to club')
+        }
+    </script>
 {% endblock %}

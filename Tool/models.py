@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.attributes import flag_modified
 from datetime import datetime
 from sqlalchemy import PickleType
 from Tool import db, login_manager
@@ -105,10 +106,11 @@ class User(db.Model, UserMixin):
     skills = db.relationship('Skill', secondary=user_skills, back_populates='users')
 
     profile_pic = db.Column(db.String(200), nullable=False)
+    banner_color = db.Column(db.String(200), nullable=False, default = 'cyan')
 
     description = db.Column(db.String, nullable = False)
 
-    def __init__(self, name, email, password, description,profile_pic = '/Tool/static/images/default.jpg', golds=0, silvers=0, bronzes=0, club_id=1):
+    def __init__(self, name, email, password, description,profile_pic = '../static/images/default.jpg', golds=0, silvers=0, bronzes=0, club_id=1):
         self.name = name
         self.email = email
         self.password_hash = generate_password_hash(password)  # Hashing the password
@@ -127,6 +129,7 @@ class User(db.Model, UserMixin):
     def add_notification(self, message):
         """Adds a new notification to the user's list of notifications."""
         self.notifications.append(message)
+        flag_modified(self, "notifications")  # Mark the notifications field as modified
         db.session.commit()
 
     def clear_notifications(self):
@@ -168,6 +171,7 @@ class Club(db.Model):
 
     # Many-to-many relationship for clubs participating in events
     events = db.relationship('Event', secondary=event_clubs, back_populates='clubs')
+    host_events = db.relationship('Event', back_populates='host')
 
     submissions = db.relationship('Submission', back_populates='club')
 
@@ -175,27 +179,27 @@ class Club(db.Model):
     registered_sub_events = db.relationship('SubEvent', secondary=sub_event_club_registrations, back_populates='registered_clubs')
 
 
-    profile_pic = db.Column(db.String(200), nullable=False, default = '/Tool/static/images/default.jpg')
+    profile_pic = db.Column(db.String(200), nullable=False, default = '../static/images/default.jpg')
 
     description = db.Column(db.String, nullable = False)
 
 
     def __repr__(self):
         return f'<Club {self.name}-{self.id}>'
-
+  
 # Event model
 class Event(db.Model):
     __tablename__ = 'event'  # Table name
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     host_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
+    host = db.relationship('Club', back_populates='host_events')
 
      #all 5 should be nullable = false, are true for testing purposes
     registration_end_date = db.Column(db.DateTime, nullable=True) 
     prompts_date = db.Column(db.DateTime, nullable=True)  
     submission_date = db.Column(db.DateTime, nullable=True)  
     event_date = db.Column(db.DateTime, nullable=True)
-    result_date = db.Column(db.DateTime, nullable=True)
 
     brochure_link = db.Column(db.String(255), nullable=True)
 
@@ -205,7 +209,7 @@ class Event(db.Model):
 
     sub_events = db.relationship('SubEvent', backref='parent_event', cascade='all, delete-orphan', lazy=True)
 
-    profile_pic = db.Column(db.String(200), nullable=False, default = '/Tool/static/images/default.jpg')
+    profile_pic = db.Column(db.String(200), nullable=False, default = '../static/images/default.jpg')
 
     description = db.Column(db.String, nullable = False)
     

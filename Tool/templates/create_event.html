@@ -4,43 +4,239 @@
 {% block title %} Create Event {% endblock %}
 
 {% block content %}
+<style>
+
+    form {
+        width: 75%;
+        margin: 50px auto;
+        background-color: #000;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    form:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        form {
+            width: 90%;
+            padding: 20px;
+        }
+    }
 
 
-<form method="POST" action="/create-event">
-    <label for="event_name">Event Name:</label>
-    <input type="text" id="event_name" name="event_name" required>
+    /* Input field styling */
+    input[type="text"], input[type="number"] {
+        /* width: 100%; */
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #a1a1a1;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        background-color: transparent;
+        color: #fefefe;
+    }
 
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #a1a1a1;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        background-color: transparent;
+        color: #fefefe;
+    }
+
+    #sub_events .sub_event input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid #a1a1a1;
+        border-radius: 0px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        background-color: transparent;
+        color: #fefefe;
+    }
+
+
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus  {
+        border-color: var(--secondary); /* Updated focus border color */
+        outline: none;
+    }
+
+    /* Sub-event section styling */
+    #sub_events .sub_event {
+        background-color: transparent;
+        padding: 20px;
+        margin-top: 20px;
+        border: 2px solid #a1a1a1;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    #sub_events .sub_event:hover {
+        transform: scale(1.0125);
+    }
+
+    /* Button styling */
+    button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    select option {
+        background-color: var(--background);
+        color: var(--text);
+    }
+
+    input[type="date"] {
+        background-color: transparent;
+        color: var(--text);
+    }
+
+</style>
+
+<form method="POST" action="/create-event" enctype="multipart/form-data">
+    <div class="flex gap-8">
+        <div class="w-1/2">
+
+            <div class="flex w-full items-center justify-between gap-4">
+                <input type="text" id="event_name" name="event_name" placeholder="Name" required class="w-1/2">
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*" class='hidden'>
+                    <label for="profile_pic" class="cursor-pointer bg-primary hover:bg-red-600 transition-colors text-text font-semibold px-4 py-2 rounded-lg text-center flex justify-center items-center space-x-2 w-1/2 mb-4">
+                        <ion-icon name="cloud-upload-outline" class="font-24"></ion-icon>
+                        <p>Profile Picture</p>
+                    </label>
+            </div>
+            <textarea type="text" id="event_description" name="event_description" placeholder="Description" rows="4" required></textarea>
+        </div>
+        <div class="flex flex-col w-1/2">
+            <input type="text" name="brochure" id="brochure" placeholder="Link to the event brochure" required class="w-full">
+            <div class="flex gap-2 w-full">
+                <div class="flex flex-col w-1/2">
+                    <input type="text" placeholder="Registration Deadline" name="date1" id="date1" class="w-full flatpickr">
+                    <input type="text" placeholder="Prompts Release Date" name="date2" id="date2" class="w-full flatpickr">
+                </div>
+                <div class="flex flex-col w-1/2">
+                    <input type="text" placeholder="Submission Deadline" name="date3" id="date3" class="w-full flatpickr">
+                    <input type="text" placeholder="Live Event Date" name="date4" id="date4" class="w-full flatpickr">
+                </div>
+            </div>            
+        </div>
+    </div>
+    
+
+    <h2 class="text-text bold mx-2 mt-4 text-2xl">Sub-Events</h2>
     <div id="sub_events">
         <!-- Initial sub-event input fields -->
-        <div class="sub_event">
-            <label for="sub_event_name_1">Sub-Event Name:</label>
-            <input type="text" name="sub_event_name_1" required>
-            <label for="sub_event_participants_1">No. of Participants:</label>
-            <input type="number" name="sub_event_participants_1" required>
+        <div class="sub_event flex items-center">
+            <div class="flex flex-col w-1/2 pr-6">
+                <input type="text" name="sub_event_name_1" placeholder="Name" required>
+                <input type="number" name="sub_event_participants_1" placeholder="No. of Participants" required>
+            </div>
+            <div class="w-1/2 flex flex-col items-center h-full ">
+                <textarea name="description_1" id="description_1" rows="2" placeholder="Description" required></textarea>
+                <div class="flex gap-16 items-center mt-4">
+                    <select name="mode_1" id="mode_1" class="bg-transparent text-text">
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                    <select name="type_1" id="type_1" class="bg-transparent text-text text-center">
+                        <option value="Submission">Submission Required</option>
+                        <option value="No-Submission">No Submission</option>
+                    </select>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <button type="button" onclick="addSubEvent()">Add Another Sub-Event</button>
-    <button type="submit">Create Event</button>
+    <button type="button" onclick="addSubEvent()" class="bg-text text-background rounded-full">Add a Sub-Event</button>
+    <button type="submit" class="bg-text text-background rounded-full">Create Event</button>
 </form>
 
 <script>
     let subEventCount = 1;
 
     function addSubEvent() {
-        subEventCount++;
-        const subEventDiv = document.createElement('div');
-        subEventDiv.className = 'sub_event';
-        subEventDiv.innerHTML = `
-            <label for="sub_event_name_${subEventCount}">Sub-Event Name:</label>
-            <input type="text" name="sub_event_name_${subEventCount}" required>
-            <label for="sub_event_participants_${subEventCount}">No. of Participants:</label>
-            <input type="number" name="sub_event_participants_${subEventCount}" required>
-        `;
-        document.getElementById('sub_events').appendChild(subEventDiv);
-    }
+    subEventCount++;
+    
+    const subEventDiv = document.createElement('div');
+    subEventDiv.className = 'sub_event flex items-center';
+
+    subEventDiv.innerHTML = `
+        <div class="flex flex-col w-1/2 pr-6">
+            <input type="text" name="sub_event_name_${subEventCount}" placeholder="Name" required>
+            <input type="number" name="sub_event_participants_${subEventCount}" placeholder="No. of Participants" required>
+        </div>
+        <div class="w-1/2 flex flex-col items-center h-full">
+            <div class="flex gap-16 items-center mb-4">
+                <select name="mode_${subEventCount}" id="mode_${subEventCount}" class="bg-transparent text-text">
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+                <select name="type_${subEventCount}" id="type_${subEventCount}" class="bg-transparent text-text text-center">
+                    <option value="Submission">Submission Required</option>
+                    <option value="No-Submission">No Submission</option>
+                </select>
+            </div>
+            <textarea name="description_${subEventCount}" id="description_${subEventCount}" rows="2" placeholder="Description" required></textarea>
+        </div>
+    `;
+
+    document.getElementById('sub_events').appendChild(subEventDiv);
+}
+    
 </script>
 
+<script>
+$(document).ready(function() {
+    $('.flatpickr').flatpickr({
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "F j, Y",
+        allowInput: true,
+        onReady: function(selectedDates, dateStr, instance) {
+            instance.altInput.placeholder = instance.input.placeholder;
+        }
+    });
+
+    // Example of changing the color scheme using custom CSS
+    document.documentElement.style.setProperty('--flatpickr-primary-color', '#3498db'); // Example: blue primary color
+    document.documentElement.style.setProperty('--flatpickr-accent-color', '#e74c3c');  // Example: red accent color
+});
+
+$('#profile_pic').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+             // Get the file name from the path
+            if (fileName == '') {
+                fileName = "Profile Picture";
+            }
+            $('label[for="profile_pic"] p').text(fileName); // Change the label text to the file name
+        });
+
+</script>
 
 
 {% endblock %}

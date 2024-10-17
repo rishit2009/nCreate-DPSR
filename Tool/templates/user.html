@@ -5,7 +5,8 @@
 
 {% block content %}
 
-<div class="w-full h-48 bg-[cyan] flex justify-center items-center">
+<!-- banner -->
+<div class="w-full h-48 bg-[{{ user.banner_color }}] flex justify-center items-center">
 </div>
 
 <!-- Profile Container -->
@@ -41,27 +42,16 @@
     <h2 class="text-2xl font-semibold mb-2 text-text">Skills</h2>
     <div class="flex flex-wrap">
       {% for skill in user.skills %}
-        <span class="bg-primary text-background px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2">{{ skill.name }}</span>
+        <span class="bg-primary text-text px-4 py-1 rounded-full text-sm font-medium mr-2 mb-2">{{ skill.name }}</span>
       {% endfor %}
     </div>
   </div>
 <!-- Prizes -->
           <div class='mb-6 text-text'>
               <h2 class="text-2xl font-semibold mb-2">Achievements</h2>
-              <div class="flex items-center gap-4">
-                <div class="flex flex-col gap-2 items-center">
-                    <img src="../static/images/assets/gold-medal.png" alt="" class="h-[40px] w-[40px]">
-                    <span class="text-xl">{{ user.golds }}</span>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                    <img src="../static/images/assets/silver-medal.png" alt="" class="h-[40px] w-[40px]">
-                    <span class="text-xl">{{ user.silvers }}</span>
-                </div>
-                <div class="flex flex-col gap-2 items-center">
-                    <img src="../static/images/assets/bronze-medal.png" alt="" class="h-[40px] w-[40px]">
-                    <span class="text-xl">{{ user.bronzes }}</span>
-                </div>
-            </div>
+              {% for ach in achievements %}
+              <p>{{ ach }}</p>
+              {% endfor %}
           </div>
   <!-- Contact Info -->
   <div class="mb-6 text-text">

@@ -1,84 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+{% extends 'base.html' %}
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- title -->
+{% block title %} Register {% endblock %}
 
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-</head>
-<body>
-    <h1>Register</h1>
-    <form method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" class="mx-auto">
-        <div>
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
+{% block content %}
+<div class=" flex  text-white overflow-hidden w-full">
+    <img class='h-[88vh] w-[70%] object-fill' src="../static/images/assets/register 2.png" alt="">
+    <div class='w-[60%] h-full overflow-y-auto scrollbar-hide'>
+        <div class='flex flex-col items-center justify-center min-h-[88vh] py-8 px-4'>
+            <div class='flex flex-col items-center mb-8'>
+                <!-- Your logo here -->
+                <svg id="logo-36" width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.9523 11.0726C18.5586 7.69873 18.1429 4.13644 18.1429 0H21.8571C21.8571 4.08998 21.4434 7.64774 21.0502 11.0254C20.7299 13.778 20.4235 16.411 20.3666 19.115C22.2316 17.1697 23.863 15.107 25.572 12.9463C27.6791 10.2823 29.9043 7.46945 32.829 4.54464L35.4554 7.17104C32.5633 10.0631 29.7547 12.2861 27.0884 14.3966L27.0859 14.3985C24.9141 16.1178 22.8365 17.7624 20.885 19.6334C23.579 19.5765 26.1911 19.2717 28.9272 18.9524C32.3011 18.5586 35.8636 18.1429 40 18.1429V21.8571C35.9102 21.8571 32.3524 21.4432 28.9749 21.0502L28.9724 21.05C26.2204 20.7298 23.5882 20.4236 20.885 20.3666C22.829 22.2302 24.8906 23.8609 27.0499 25.5687L27.0533 25.5716C29.7174 27.6789 32.5304 29.9039 35.4554 32.829L32.829 35.4554C29.9369 32.5634 27.714 29.755 25.6038 27.0889L25.5988 27.082L25.5946 27.0765C23.8775 24.9081 22.2349 22.8338 20.3666 20.885C20.4235 23.589 20.7299 26.222 21.0502 28.9746C21.4434 32.3523 21.8571 35.91 21.8571 40H18.1429C18.1429 35.8636 18.5586 32.3013 18.9523 28.9274L18.9531 28.9219C19.272 26.1877 19.5765 23.5772 19.6334 20.885C17.7651 22.8338 16.1225 24.9081 14.4054 27.0765L14.4012 27.082L14.3962 27.0889C12.286 29.755 10.0631 32.5634 7.17104 35.4554L4.54464 32.829C7.46959 29.9039 10.2826 27.6789 12.9467 25.5716L12.9501 25.5687C15.1094 23.8609 17.171 22.2302 19.115 20.3666C16.411 20.4237 13.7779 20.73 11.0251 21.0502C7.6476 21.4432 4.08984 21.8571 0 21.8571V18.1429C4.13644 18.1429 7.69894 18.5586 11.0728 18.9524C13.8089 19.2717 16.421 19.5765 19.115 19.6334C17.1627 17.7617 15.0843 16.1166 12.9116 14.3966C10.2453 12.2861 7.43666 10.0631 4.54464 7.17104L7.17104 4.54464C10.0957 7.46945 12.3209 10.2823 14.428 12.9463C16.137 15.1069 17.7684 17.1696 19.6334 19.1148C19.5765 16.4227 19.272 13.8123 18.9531 11.0781L18.9523 11.0726Z" class="ccustom" fill="#FFA589"></path> 
+                </svg>
+    
+                <h2 class='font-bold text-2xl mt-4'>let's get started</h2>
+            </div>
+    
+            <form class='flex flex-col gap-4 w-full max-w-[300px]' method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+                <!-- Name field -->
+                <div class='flex flex-col'>
+                    <input type="text" id="name" name="name" class='form-input' placeholder="Name" required>
+                </div>
+            
+                <!-- Email field -->
+                <div class='flex flex-col'>
+                    <input type="email" id="email" name="email" class='form-input' placeholder="Email" required>
+                </div>
+            
+                <!-- Password field -->
+                <div class='flex flex-col'>
+                    <input type="password" id="password" name="password" class='form-input' placeholder="Set Password" required>
+                </div>
+            
+                <!-- Skills dropdown -->
+                <div class="flex flex-col">
+                    <select id="skills" name="skills" multiple="multiple" class="form-input select2-bg" placeholder="Skills"></select>
+                </div>
+            
+                <!-- Profile picture upload -->
+                <div class='flex flex-col'>
+                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*" class='hidden'>
+                    <label for="profile_pic" class="cursor-pointer bg-primary hover:bg-red-600 transition-colors text-text font-semibold px-4 py-2 rounded-lg text-center flex justify-center items-center space-x-2">
+                        <ion-icon name="cloud-upload-outline" class="font-24"></ion-icon>
+                        <p>Profile Picture</p>
+                    </label>
+                </div>
+            
+                <!-- Description -->
+                <span class="flex flex-col">
+                    <textarea id="description" name="description" class='form-input' rows="2" placeholder="Description" required></textarea>
+                </span>
+            
+                <!-- Submit and Login buttons -->
+                <button value="Register" type="submit" class='mt-2 bg-text hover:bg-gray-200 transition-colors text-black font-semibold px-10 py-2 rounded-lg w-full'>Sign Up</button>
+                <p class="mx-auto">Already have an account? <a href="{{url_for('login')}}" class="underline">Login</a></p>
+            </form>
+            
         </div>
+    </div>
+</div>
 
-        <div>
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" required><br><br>
-        </div>
 
-        <div>
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password" required><br><br>
-        </div>
-
-        <label for="skills">Skills:</label>
-        <select class="form-control" id="skills" name="skills" multiple="multiple" style="width: 200px;"></select>
-
-        <div>
-            <label for="profile_pic">Profile Picture:</label><br>
-            <input type="file" id="profile_pic" name="profile_pic" accept="image/*"><br><br>
-        </div>
-
-        <div>
-            <label for="description">Description:</label><br>
-            <textarea id="description" name="description" required></textarea><br><br>
-        </div>
-
-        <div>
-            <input type="submit" value="Register">
-        </div>
-    </form>
-
-    <script>
-        $(document).ready(function() {
-            $('#skills').select2({
-                tags: true,  // Allows creation of new skills
-                tokenSeparators: [','],
-                ajax: {
-                    url: '/search_skills',  // Endpoint for fetching existing skills
-                    dataType: 'json',
-                    processResults: function (data) {
-                        return {
-                            results: data.map(function(skill) {
-                                return { id: skill.id, text: skill.name };
-                            })
-                        };
-                    }
-                },
-                createTag: function(params) {
-                    // Return the new skill name as is, not as an object
+<script>
+    // Initialize Select2 for skills dropdown
+    $(document).ready(function() {
+        $('#skills').select2({
+            placeholder: "Select Skills",
+            tags: true,  // Allows creation of new skills
+            tokenSeparators: [','],
+            ajax: {
+                url: '/search_skills',  // Endpoint for fetching existing skills
+                dataType: 'json',
+                processResults: function (data) {
                     return {
-                        id: params.term,
-                        text: params.term,
-                        newTag: true  // Flag to indicate it's a new skill
+                        results: data.map(function(skill) {
+                            return { id: skill.id, text: skill.name };
+                        })
                     };
                 }
-            });
-
+            },
+            createTag: function(params) {
+                return {
+                    id: params.term,
+                    text: params.term,
+                    newTag: true  // Flag to indicate it's a new skill
+                };
+            }
         });
-    </script>
 
-</body>
-</html>
+        // Apply custom style to Select2 elements
+        $('.select2-bg').on('select2:open', function() {
+            $('.select2-container--default .select2-selection--multiple').css('background-color', '#141414');
+        });
+
+        // Auto-increase Select2 height based on number of selected tags
+        // $('#skills').on('change', function() {
+        //     let $container = $('.select2-selection--multiple');
+        //     let $choices = $container.find('.select2-selection__choice');
+        //     let newHeight = Math.max(42, ($choices.length + 1) * 42); // Adjust base height and add per choice
+        //     $container.height(newHeight);
+        // });
+
+        // Display the file name when a file is selected
+        $('#profile_pic').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+             // Get the file name from the path
+            if (fileName == '') {
+                fileName = "Profile Picture";
+            }
+            $('label[for="profile_pic"] p').text(fileName); // Change the label text to the file name
+        });
+    });
+</script>
+
+
+<style>
+    /* Common styling for input, select, and textarea */
+    .form-input {
+        padding: 8px;
+        border-radius: 8px;
+        background-color: #141414;
+        border: 2px solid #510b1c;
+        color: white;
+        transition: border-color 0.3s ease;
+    }
+
+    /* Select2 dropdown and multiple selection background */
+    .select2-container--default .select2-selection--multiple {
+        background-color: #141414 !important;
+        border-color: #510b1c !important;
+        color: white !important;
+    }
+
+
+    /* Styling for individual selected choices (tags) in the multiple selection */
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #121212 !important;
+        color: white !important;
+    }
+
+    /* Dropdown background and text color */
+    .select2-container--default .select2-dropdown {
+        background-color: #141414 !important;
+        border: none !important;
+    }
+
+    /* Dropdown items */
+    .select2-container--default .select2-results__option {
+        color: white !important;
+    }
+
+    /* Highlighted (hovered) dropdown item */
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #510b1c !important;
+        color: white !important;
+    }
+
+    /* Focused state of the Select2 element */
+    .select2-container--default .select2-selection--multiple:focus {
+        background-color: #141414 !important;
+        border-color: #510b1c !important;
+    }
+
+    /* Remove default scrollbar for dropdown */
+    .select2-dropdown .select2-results__options {
+        max-height: 200px;
+        overflow-y: auto;
+        scrollbar-width: none;
+    }
+
+    .select2-dropdown .select2-results__options::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Styling for already selected choices in the dropdown */
+.select2-container--default .select2-results__option--selected {
+    background-color: #510b1c !important; /* Background color for selected options in dropdown */
+    color: white !important; /* Text color for selected options */
+}
+
+
+
+</style>
+
+{% endblock %}

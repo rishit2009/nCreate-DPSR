@@ -6,15 +6,13 @@
   --header-height: 3.5rem;
 
   /*========== Colors ==========*/
-  /*Color mode HSL(hue, saturation, lightness)*/
   --white-color: hsl(0, 0%, 100%);
   --black-color: hsl(0, 0%, 0%);
 
   /*========== Font and typography ==========*/
-  /*.5rem = 8px | 1rem = 16px ...*/
   --body-font: "Montserrat Alternates", sans-serif;
   --h1-font-size: 1.5rem;
-  --normal-font-size: .938rem;
+  --normal-font-size: 0.938rem;
 
   /*========== Font weight ==========*/
   --font-regular: 400;
@@ -65,47 +63,41 @@ a {
 
 /*=============== HEADER & NAV ===============*/
 .header {
-  position: fixed;
   width: 100%;
   top: 0;
   left: 0;
-  background-color: var(--black-color);
-  z-index: var(--z-fixed);
+  background-color: #010101;
+  z-index: 10;
 }
 
 .nav {
   position: relative;
-  height: var(--header-height);
+  height: 12vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: whitesmoke;
 }
 
 /* Increase the size of .hello-bye icons */
 .nav__item.hello-bye ion-icon {
-  font-size: 24px; /* Increase icon size */
+  font-size: 24px;
 }
-
-  
-
 
 .nav__logo {
   color: var(--white-color);
   font-weight: var(--font-medium);
 }
 
-.nav__close, 
+.nav__close,
 .nav__toggle {
-  display: flex;
   color: var(--white-color);
   font-size: 1.5rem;
   cursor: pointer;
 }
 
-
-
 /* Navigation for mobile devices */
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 768px) {
   .nav__menu {
     position: fixed;
     left: -100%;
@@ -117,158 +109,120 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: left .4s;
-  }
-
-  .nav__item {
-    transform: translateX(-150px);
-    visibility: hidden;
-    transition: transform .4s ease-out, visibility .4s;
-  }
-
-  .nav__item:nth-child(1) {
-    transition-delay: .1s;
-  }
-  .nav__item:nth-child(2) {
-    transition-delay: .2s;
-  }
-  .nav__item:nth-child(3) {
-    transition-delay: .3s;
-  }
-  .nav__item:nth-child(4) {
-    transition-delay: .4s;
-  }
-  .nav__item:nth-child(5) {
-    transition-delay: .5s;
-  }
-}
-
-.nav__list, 
-.nav__social {
-  display: flex;
-}
-
-.nav__list {
-  flex-direction: column;
-  row-gap: 3rem;
-}
-
-.nav__link {
-  position: relative;
-  color: var(--white-color);
-  font-size: var(--h1-font-size);
-  font-weight: var(--font-medium);
-  display: inline-flex;
-  align-items: center;
-  transition: opacity .4s;
-}
-
-.nav__link i {
-  font-size: 2rem;
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .4s, visibility .4s;
-}
-
-.nav__link span {
-  position: relative;
-  transition: margin .4s;
-}
-
-.nav__link span::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 0;
-  height: 2px;
-  background-color: var(--white-color);
-  transition: width .4s ease-out;
-}
-
-/* Animation link on hover */
-.nav__link:hover span {
-  margin-left: 2.5rem;
-}
-
-.nav__link:hover i {
-  opacity: 1;
-  visibility: visible;
-}
-
-.nav__link:hover span::after {
-  width: 100%;
-}
-
-/* Sibling fade animation */
-.nav__list:has(.nav__link:hover) .nav__link:not(:hover) {
-  opacity: .4;
-}
-
-.nav__close {
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-}
-
-.nav__social {
-  column-gap: 1rem;
-}
-
-.nav__social-link {
-  color: var(--white-color);
-  font-size: 1.5rem;
-  transition: transform .4s;
-}
-
-.nav__social-link:hover {
-  transform: translateY(-.25rem);
-}
-
-/* Show menu */
-.show-menu {
-  left: 0;
-}
-
-/* Animation link when displaying menu */
-.show-menu .nav__item {
-  visibility: visible;
-  transform: translateX(0);
-}
-
-/*=============== BREAKPOINTS ===============*/
-/* For large devices */
-@media screen and (min-width: 1150px) {
-  .container {
-    margin-inline: auto;
-  }
-
-  .nav {
-    height: calc(var(--header-height) + 2rem);
-  }
-
-  .nav__toggle, 
-  .nav__close {
-    display: none;
-  }
-
-  .nav__link {
-    font-size: var(--normal-font-size);
-  }
-
-  .nav__link i {
-    font-size: 1.5rem;
+    transition: left 0.4s;
+    
   }
 
   .nav__list {
-    flex-direction: row;
-    column-gap: 3.5rem;
+    flex-direction: column;
+    row-gap: 3rem;
   }
 
+  .nav__link {
+    color: var(--white-color);
+    font-size: var(--h1-font-size);
+    font-weight: var(--font-medium);
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .nav__link i {
+    visibility: hidden;
+  }
+
+  .nav__close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+  }
+
+  /* Show menu */
+  .show-menu {
+    left: 0;
+  }
+}
+
+/*=============== DESKTOP STYLES ===============*/
+@media screen and (min-width: 768px) {
   .nav__menu {
     display: flex;
+    flex-direction: row;
+    transition: none;
+  }
+
+  .nav__link i {
+    color: var(--white-color);
+    font-size: 1.5rem;
+    position: absolute;
+    left: -2rem;
+    opacity: 0;
+    visibility: visible;
+    transition: all 0.4s ease;
+  }
+
+  .nav__link span {
+    position: relative;
+    transition: margin-left 0.4s ease;
+    color: white;
+  }
+
+  .nav__link span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background-color: var(--white-color);
+    transition: width 0.4s ease-out;
+  }
+
+
+.nav__link:hover i {
+  opacity: 1;
+  transform: translateX(0.5rem);
+}
+
+.nav__link i {
+  color: var(--white-color);
+  font-size: 1.5rem;
+  position: absolute;
+  left: -2rem;
+  opacity: 0;
+  visibility: visible;
+  transition: all 0.4s ease; /* Transition for smooth icon appearance */
+}
+
+/* Sibling fade animation with smooth transition */
+.nav__list .nav__link {
+  transition: opacity 0.4s ease; /* Smooth transition for dimming */
+}
+
+.nav__list:has(.nav__link:hover) .nav__link:not(:hover) {
+  opacity: 0.4;
+}
+
+  .nav__link:hover span::after {
+    width: 100%;
+  }
+
+  /* Sibling fade animation */
+  .nav__list:has(.nav__link:hover) .nav__link:not(:hover) {
+    opacity: 0.4;
+  }
+
+  .nav__list {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
     align-items: center;
-    column-gap: 3.5rem;
+  }
+
+
+  .nav__toggle,
+  .nav__close {
+    display: none;
   }
 }

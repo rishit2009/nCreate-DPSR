@@ -1,8 +1,42 @@
 from Tool import app, db, login_manager
-from Tool.models import User, Club, Forum, Comment, Event, SubEvent, Submission, Skill
+from Tool.models import User, Club, Forum, Comment, Event, SubEvent, Submission, Skill, user_sub_event_positions
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 import os
+from PIL import Image
+from datetime import datetime
+
+
+def get_average_color_hex(image_path):
+    # Open the image
+    with Image.open(image_path) as img:
+        # Resize image to a smaller size for faster processing (optional)
+        img = img.resize((50, 50))  # Resizing reduces the processing time
+        
+        # Get the pixels of the image
+        pixels = img.getdata()
+        
+        # Initialize variables to store the sum of RGB values
+        r_total = g_total = b_total = 0
+        pixel_count = len(pixels)
+        
+        # Loop through each pixel and sum up the RGB values
+        for r, g, b in pixels:
+            r_total += r
+            g_total += g
+            b_total += b
+        
+        # Calculate the average RGB values
+        avg_r = r_total // pixel_count
+        avg_g = g_total // pixel_count
+        avg_b = b_total // pixel_count
+        
+        # Convert the average RGB values to hex format
+        avg_color_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
+        
+        return avg_color_hex
+
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -60,7 +94,6 @@ def _add_skills():
     'Adobe InDesign', 'Canva', 'CorelDRAW', 'Principle', 
     'ProtoPie', 'Framer'
 ]
-
 
     for skill_name in skills:
     # Check if the skill already exists
@@ -125,7 +158,8 @@ def register():
             filename = f"{new_user.id}.{file.filename.rsplit('.', 1)[1].lower()}"  # Adjust extension as needed
             filepath = ('Tool/static/images/users/'+ filename)
             file.save(filepath)
-
+            
+            new_user.banner_color = get_average_color_hex(filepath)
             new_user.profile_pic = '../static/images/users/' + filename  # Save the file path to the user's profile
             db.session.commit()
 
@@ -153,14 +187,38 @@ def logout():
     return redirect(url_for('login'))
 
 
+
 @app.route('/user/<uid>')
 @login_required
 def user_profile(uid):
     user = db.session.get(User, uid)
+    if not user : return url_for('index')
     club = db.session.get(Club, user.club_id)
-    print(user.skills)
-    return render_template('user.html', user = user, club = club)
+    achs = []
+    if user.won_sub_events:
+        for sube in user.won_sub_events:
+            pos = db.session.query(user_sub_event_positions.c.position).filter_by(
+                user_id=user.id, sub_event_id=sube.id
+            ).scalar()
+            ename = db.session.query(Event, sube.event_id).first().name
+            pos_dict = {1 : '1st', 2 : '2nd', 3 : '3rd'}
+            achs.append(f'Achieved {pos_dict[pos]} postion at {sube.name} at {ename}')
+    else :
+        achs = ['Theres nothing here yet :( ']
 
+    print(user.notifications)
+    return render_template('user.html', user = user, club = club, achievements = achs)
+
+
+@app.route('/clear_notif/<uid>', methods=['POST'])
+def _clear_notifs(uid):
+    user = db.session.get(User, uid)
+    if user:
+        user.clear_notifications()  # Assuming this method clears notifications
+        db.session.commit()  # Commit the transaction if necessary
+        return jsonify({'success': True, 'message': 'Notifications cleared successfully.'}), 200
+    else:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
 
 @app.route('/clubs')
 @login_required
@@ -192,6 +250,19 @@ def cancel_request_club(cid):
 @login_required
 def club(cid):
     club = db.session.get(Club, cid)
+
+    won_sub_events = db.session.query(
+        SubEvent, user_sub_event_positions.c.position
+    ).join(
+        user_sub_event_positions, SubEvent.id == user_sub_event_positions.c.sub_event_id
+    ).join(
+        User, User.id == user_sub_event_positions.c.user_id
+    ).filter(
+        User.club_id == cid  # Filter by the club ID
+    ).all()
+
+    print(won_sub_events)
+
     return render_template('club.html', club=club)
 
 
@@ -314,41 +385,56 @@ def leave(cid):
     return redirect(url_for('view_clubs'))
 
 
-@app.route('/create-club', methods=['POST'])
+@app.route('/create-club', methods=['POST', 'GET'])
 @login_required
 def create_club():
-
-    prev_club = db.session.get(Club, current_user.club_id)
-    prev_club.members.remove(current_user)
-    if current_user in prev_club.managers:
-        prev_club.managers.remove(current_user)
+    if request.method == 'GET':
+        return render_template('create_club.html')
     
+    elif request.method == 'POST':
+        # Remove the user from their previous club (if they had one)
+        prev_club = db.session.get(Club, current_user.club_id)
+        if prev_club:
+            prev_club.members.remove(current_user)
+            if current_user in prev_club.managers:
+                prev_club.managers.remove(current_user)
 
+        # Get form data
+        name = request.form['name']
+        description = request.form['description']
 
-    name = request.form['name']
-    club = Club(name=name)
-    club.managers.append(current_user)
-    club.members.append(current_user)
-    current_user.club_id = club.id
-    db.session.add(club)
-    db.session.commit()
-
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    file = request.files['file']
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = club.id
-        filepath = os.path.join('static/images/clubs', filename)
-        file.save(filepath)
-        club.profile_pic = filepath
+        # Create a new club and associate the current user as a manager and member
+        club = Club(name=name, description=description)
+        club.managers.append(current_user)
+        club.members.append(current_user)
+        db.session.add(club)
         db.session.commit()
 
+        print([(k ,i) for k,i in request.files.items()])
 
-    return redirect(url_for('club', cid=club.id))
+        # Handle file upload for the profile picture
+        if 'profile_pic' not in request.files:
+            print('No file part')
+            return redirect(request.url)
+        
+        file = request.files['profile_pic']
+        
+        if file.filename == '':
+            print('No selected file')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            filename = (f"{club.id}.{file.filename.rsplit('.', 1)[1].lower()}")
+            filepath = os.path.join('Tool/static/images/clubs/', filename)
+            
+            # Save the file to the desired path
+            file.save(filepath)
+            
+            # Update the club's profile_pic field
+            club.profile_pic = '../static/images/clubs/' + filename
+            db.session.commit()
+
+        return redirect(url_for('club', cid=club.id))
 
 
 @app.route('/test')
@@ -443,7 +529,6 @@ def see_forums():
 @login_required
 def view_events():
     events = Event.query.all()
-
     return render_template('events.html', events = events)
 
 
@@ -451,41 +536,106 @@ def view_events():
 @login_required
 def event(eid):
     event = db.session.get(Event, eid)
-    return render_template('event.html', event = event)
+    host_club = db.session.get(Club, event.host_id)
+    return render_template('event.html', event = event, host = host_club)
 
 
 @app.route('/create-event', methods=['GET', 'POST'])
 @login_required
 def create_event():
+    club_id = current_user.club_id
+    club = db.session.get(Club, club_id) 
     if request.method == 'GET':
-        managed_clubs = current_user.managed_club
-        return render_template('create_event.html', managed_clubs=managed_clubs)
-    elif request.method == 'POST':
-        club_id = current_user.club_id
-        club = db.session.get(Club, club_id)
         if current_user not in club.managers:
             current_user.add_notification('You must be a manager to create an event')
             return redirect(url_for('index'))
-        event_name = request.form['event_name']
-        event = Event(name=event_name, host_id=club_id)
-        db.session.add(event)
-        db.session.commit() 
 
+        return render_template('create_event.html')
+    
+    elif request.method == 'POST':
+
+        for key, value in request.form.items():
+            print(key, value) 
+        
+        
+        # Event Details
+        event_name = request.form['event_name']
+        event_description = request.form['event_description']
+        brochure_link = request.form['brochure']
+
+        # Convert date inputs to Python datetime objects
+        registration_end_date = datetime.strptime(request.form.get('date1'), '%Y-%m-%d')
+        prompts_date = datetime.strptime(request.form.get('date2'), '%Y-%m-%d')
+        submission_date = datetime.strptime(request.form.get('date3'), '%Y-%m-%d')
+        event_date = datetime.strptime(request.form.get('date4'), '%Y-%m-%d')
+
+        # Create Event Object
+        event = Event(
+            name=event_name,
+            host_id=club_id,
+            description=event_description,
+            brochure_link=brochure_link,
+            registration_end_date=registration_end_date,
+            prompts_date=prompts_date,
+            submission_date=submission_date,
+            event_date=event_date
+        )
+
+        db.session.add(event)
+        db.session.commit()
+
+        # Sub-Event Details
         sub_event_count = 0
         for key, value in request.form.items():
             if key.startswith('sub_event_name_'):
                 sub_event_count += 1
                 sub_event_name = value
                 sub_event_participants = request.form[f'sub_event_participants_{sub_event_count}']
+                sub_event_description = request.form[f'description_{sub_event_count}']
+                sub_event_mode = request.form[f'mode_{sub_event_count}']  # Online, Offline, Hybrid
+                sub_event_type = request.form[f'type_{sub_event_count}']  # Submission, No Submission
+                
+                # Determine if submission-based
+                is_submission_based = True if sub_event_type == "Submission" else False
 
+                # Create SubEvent Object
                 sub_event = SubEvent(
                     event_id=event.id,
                     name=sub_event_name,
-                    participant_count=sub_event_participants
+                    participant_count=sub_event_participants,
+                    description=sub_event_description,
+                    event_type=sub_event_mode.lower(),
+                    is_submission_based=is_submission_based
                 )
+
                 db.session.add(sub_event)
+
+        if 'profile_pic' not in request.files:
+            flash('No file part')
+            print('No file part')
+            print('Request files:', request.files)
+            return redirect(request.url)
+
+        file = request.files['profile_pic']
+    
+        if file.filename == '':
+            flash('No selected file')
+            print('No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+        # Assuming you want to use the user's ID for the filename
+            filename = f"{event.id}.{file.filename.rsplit('.', 1)[1].lower()}"  # Adjust extension as needed
+            filepath = ('Tool/static/images/events/'+ filename)
+            file.save(filepath)
+            
+            event.profile_pic = '../static/images/events/' + filename  # Save the file path to the user's profile
+            db.session.commit()
+
+        
         db.session.commit()
         return redirect(url_for('view_events'))
+
     
 
 @app.route('/register-event/<eid>', methods = ['GET', 'POST'])
@@ -506,7 +656,7 @@ def register_event(eid):
                     pcpt = db.session.get(User, participant_id)
                     sube.registered_users.append(pcpt)
                     pcpt.add_notification(f'You have been registered for {sube.name} at {event.name}.')
-        current_user.add_notification(f'Succesfully registered for {event.name}. You may edit you submission at the registration page before the registration ends')
+        current_user.add_notification(f'Succesfully registered for {event.name}')
         return redirect(url_for('index'))
     
 
@@ -618,3 +768,5 @@ def search_skills():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# %%

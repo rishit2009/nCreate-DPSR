@@ -1,10 +1,64 @@
 {% extends 'base.html' %}
 
 <!-- title -->
-{% block title %} Title {% endblock %}
+{% block title %} Club - {{ club.name }} {% endblock %}
 
 {% block content %}
-<!-- html stuff here -->
+<div class="bg-background text-text font-sans">
 
-home
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-primary to-accent p-8 flex items-center justify-between text-center">
+        <div class="flex items-center space-x-6">
+            <img src="{{ club.profile_pic }}" alt="Club Logo" class="rounded-full w-32 h-32 transition-transform transform hover:scale-125 duration-500">
+            <div class="flex flex-col">
+                <h1 class="text-6xl font-extrabold tracking-wide text-text">{{ club.name }}</h1>
+                <div class="flex gap-2">
+                    <div class="flex gap-2 items-center text-2xl mt-4">
+                        <ion-icon name="people-outline"></ion-icon>
+                        {{ club.members|length }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover">Join Club</button>
+    </header>
+
+    <!-- About Section -->
+    <section class="p-8 mt-8">
+        <h2 class="text-4xl font-semibold mb-6">About Us</h2>
+        <p class="max-w-prose">{{ club.description }}</p>
+    </section>
+
+    <!-- Events Section -->
+    <section class="p-8 mt-8">
+        <h2 class="text-4xl font-semibold mb-6">Events</h2>
+        <ul class="space-y-4">
+            {% for event in club.events %}
+            <li class="bg-primary text-white p-4 rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold">{{ event.name }}</h3>
+                <p class="text-lg mt-2">Date: {{ event.date }}</p>
+                <p class="text-lg">Host: {{ event.host.name }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Members Section -->
+    <section class="p-12 mt-8">
+        <h2 class="text-4xl font-bold mb-6 text-accent">Members</h2>
+        <ul class="space-y-8">
+            {% for member in club.members %}
+            <li class="flex items-center space-x-6 animate-fadeInUp transform transition-all duration-300 member">
+                <img src="{{ member.profile_pic }}" alt="{{ member.name }}" class="w-14 h-14 rounded-full">
+                <span class="text-xl text-primary">{{ member.name }}</span>
+                <div class="ml-auto text-sm opacity-75">{{ member.role }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+
+
+
+</div>
 {% endblock %}

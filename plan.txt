@@ -23,3 +23,10 @@ manage-club - view requesters, accept them, promote members, demote managers, ch
 
 
 user profile - leetcode style
+
+
+to do:-
+
+club display (link and minor improovements)
+event stuff (view, submit, register, results)
+forums(view, list)

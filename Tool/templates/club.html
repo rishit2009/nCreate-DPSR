@@ -25,6 +25,11 @@
         <button class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover" type="submit">Join Club</button>
         </form>
         {% endif %}
+        {% if current_user in club.managers %}
+        <form action="{{url_for('request_club' , cid = club.id)}}">
+        <a class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover" href="{{url_for('manage_club', cid=club.id)}}">Manage Club</a>
+        </form>
+        {% endif %}
     </header>
 
     <!-- About Section -->

@@ -86,7 +86,7 @@ class User(db.Model, UserMixin):
     notifications = db.Column(PickleType, default=[])  # List of notifications as strings
 
     # One-to-many relationship: a user can be part of only one club
-    club_id = db.Column(db.Integer, db.ForeignKey('club.id'))
+    club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable = True, default = 1)
 
     # Many-to-many relationship for clubs a user manages
     managed_club = db.relationship('Club', secondary='managers', back_populates='managers')

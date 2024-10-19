@@ -68,6 +68,14 @@
       <ion-icon name="log-out-outline"></ion-icon>
       Logout
     </a>
+    {% if club.name != 'null' %}
+    <form action="{{url_for('leave', cid = club.id)}}" method="POST">
+    <button class="flex gap-2 my-4 text-red-600 items-center" href="{{url_for('logout')}}" type="submit">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Leave {{ club.name }}
+    </button>
+    </form>
+    {% endif %}
   </div>
   {% endif %}
 

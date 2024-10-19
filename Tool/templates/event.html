@@ -123,9 +123,14 @@
       
           <!-- Close Button -->
           <div class="mt-8 text-center">
+            {% if current_user in sub_event.registered_users %}
+            <a href="{{url_for('submit', eid = event.id, sid = sub_event.id)}}" class="bg-primary text-white py-2 w-full px-8 rounded-md hover:bg-red-600 font-bold transition-colors">Submit</a>
+
+            {% else %}
             <button class="bg-primary text-white py-2 w-full px-8 rounded-md hover:bg-red-600 font-bold transition-colors" onclick="document.getElementById('subEventModal-{{ sub_event.id }}').classList.add('scale-0')">
               Close
             </button>
+            {% endif %}
           </div>
         </div>
       </div>

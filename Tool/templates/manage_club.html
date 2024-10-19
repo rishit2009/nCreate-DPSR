@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+<!-- title -->
+{% block title %} Manage Club {% endblock %}
+
+{% block content %}
+<style>
+    .main-form {
+        width: 50%;
+        margin: auto;
+        background-color: #000;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .main-form:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        .main-form {
+            width: 90%;
+            padding: 20px;
+        }
+    }
+
+    h1, h3 {
+        color: #fefefe;
+        margin-bottom: 20px;
+    }
+
+    /* Custom card styling for requesters and members */
+    .user-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .user-card img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .user-info {
+        flex-grow: 1;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .user-actions button {
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .user-actions button.promote {
+        background-color: var(--text);
+        color: var(--background);
+    }
+
+    .user-actions button.demote {
+        background-color: #f44336; /* Red color for demote */
+        color: #fff;
+    }
+
+    .user-actions button.remove {
+        background-color: #e74c3c; /* Red color for remove */
+        color: #fff;
+    }
+
+    .user-actions button:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    hr {
+        border-color: #a1a1a1;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
+
+<div class="text-text mx-auto w-full">
+    <div class="text-text main-form">
+        <h1 class="text-3xl">Manage Club</h1>
+        <hr>
+
+        <!-- Requesters Section -->
+        <h3 class="text-2xl">Requesters</h3>
+        <div class="requesters-section">
+            {% if club.requesters %}
+                {% for requester in club.requesters %}
+                    <div class="user-card">
+                        <div class="flex items-center">
+                            <img src="{{ requester.profile_pic }}" alt="Profile Image">
+                            <div class="user-info">
+                                <h4>{{ requester.name }}</h4>
+                            </div>
+                        </div>
+
+                        <form action="{{ url_for('accept', uid=requester.id, cid=club.id) }}" method="POST">
+                            <button type="submit" class="demote">Approve</button>
+                        </form>
+                        <form action="{{ url_for('reject', uid=requester.id, cid=club.id) }}" method="POST">
+                            <button type="submit" class="demote">Reject</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-400">No pending requests</p>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <!-- Members Section -->
+        <h3 class="text-2xl">Members</h3>
+        <div class="members-section">
+            {% for member in club.members %}
+                <div class="user-card">
+                    <div class="flex items-center">
+                        <img src="{{ member.profile_pic }}" alt="Profile Image">
+                        <div class="user-info">
+                            <h4>{{ member.name }}</h4>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <form action="{{ url_for('promote', uid=member.id, cid=club.id) }}" method="POST">
+                            <button type="submit" class="promote">Promote</button>
+                        </form>
+                        <form action="{{ url_for('demote', uid=member.id, cid=club.id) }}" method="POST">
+                            <button type="submit" class="demote ">Demote</button>
+                        </form>
+                        <form action="{{ url_for('remove', uid=member.id, cid=club.id) }}" method="POST">
+                            <button type="submit" class="remove ">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <hr>
+    </div>
+</div>
+
+{% endblock %}

@@ -9,33 +9,35 @@ from datetime import datetime
 
 def get_average_color_hex(image_path):
     # Open the image
-    # with Image.open(image_path) as img:
-    #     # Resize image to a smaller size for faster processing (optional)
-    #     img = img.resize((50, 50))  # Resizing reduces the processing time
-        
-    #     # Get the pixels of the image
-    #     pixels = img.getdata()
-        
-    #     # Initialize variables to store the sum of RGB values
-    #     r_total = g_total = b_total = 0
-    #     pixel_count = len(pixels)
-        
-    #     # Loop through each pixel and sum up the RGB values
-    #     for r, g, b in pixels:
-    #         r_total += r
-    #         g_total += g
-    #         b_total += b
-        
-    #     # Calculate the average RGB values
-    #     avg_r = r_total // pixel_count
-    #     avg_g = g_total // pixel_count
-    #     avg_b = b_total // pixel_count
-        
-    #     # Convert the average RGB values to hex format
-    #     avg_color_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
-        
-    #     return avg_color_hex
-    return '#eb0037'
+    try:
+        with Image.open(image_path) as img:
+            # Resize image to a smaller size for faster processing (optional)
+            img = img.resize((50, 50))  # Resizing reduces the processing time
+            
+            # Get the pixels of the image
+            pixels = img.getdata()
+            
+            # Initialize variables to store the sum of RGB values
+            r_total = g_total = b_total = 0
+            pixel_count = len(pixels)
+            
+            # Loop through each pixel and sum up the RGB values
+            for r, g, b in pixels:
+                r_total += r
+                g_total += g
+                b_total += b
+            
+            # Calculate the average RGB values
+            avg_r = r_total // pixel_count
+            avg_g = g_total // pixel_count
+            avg_b = b_total // pixel_count
+            
+            # Convert the average RGB values to hex format
+            avg_color_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
+            
+            return avg_color_hex
+    except:
+        return '#eb0037'
 
 
 
@@ -207,7 +209,6 @@ def user_profile(uid):
     else :
         achs = ['Theres nothing here yet :( ']
 
-    print(user.notifications)
     return render_template('user.html', user = user, club = club, achievements = achs)
 
 
@@ -391,10 +392,12 @@ def leave(cid):
 
     current_user.club_id = 1
     current_user.add_notification(f'You have left {club.name}')
+    db.session.add(current_user)
     db.session.commit()
-    return redirect(url_for('view_clubs'))
+    print(current_user.club_id)
+    return redirect(url_for('clubs'))
 
-
+ 
 @app.route('/create-club', methods=['POST', 'GET'])
 @login_required
 def create_club():
@@ -721,9 +724,9 @@ def submit(eid, sid):
     event = db.session.get(Event, eid)
     s_event = db.session.get(SubEvent, sid)
     if request.method == 'GET':
-        # if (current_user not in s_event.registered_users):
-        #     current_user.add_notification('You must be registered for an event to submit.')
-            # return redirect(url_for('index'))
+        if (current_user not in s_event.registered_users):
+            current_user.add_notification('You must be registered for an event to submit.')
+            return redirect(url_for('index'))
         return render_template('submit.html', event = event, sub_event = s_event)
     if request.method == 'POST':
         sub_link = request.form['submission_link']
@@ -819,18 +822,22 @@ def search_skills():
 
 
 @app.route('/learn')
+@login_required
 def learn():
     return render_template('learn.html')
         
 @app.route('/learn/cp')
+@login_required
 def learncp():
     return render_template('learncp.html')
 
 @app.route('/learn/webd')
+@login_required
 def learnwebd():
     return render_template('learnwebd.html')
 
 @app.route('/learn/av')
+@login_required
 def learnav():
     return render_template('learnav.html')
         

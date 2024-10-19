@@ -434,6 +434,8 @@ def create_club():
             return redirect(request.url)
         
         if file and allowed_file(file.filename):
+            user_image_dir = 'Tool/static/images/clubs/'
+            os.makedirs(user_image_dir, exist_ok=True) 
             filename = (f"{club.id}.{file.filename.rsplit('.', 1)[1].lower()}")
             filepath = os.path.join('Tool/static/images/clubs/', filename)
             
@@ -561,6 +563,8 @@ def create_forum():
             return redirect(request.url)
         
         if file and allowed_file(file.filename):
+            user_image_dir = 'Tool/static/images/forums/'
+            os.makedirs(user_image_dir, exist_ok=True) 
             filename = (f"{forum.id}.{file.filename.rsplit('.', 1)[1].lower()}")
             filepath = os.path.join('Tool/static/images/forums/', filename)
             
@@ -681,6 +685,8 @@ def create_event():
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
+            user_image_dir = 'Tool/static/images/events/'
+            os.makedirs(user_image_dir, exist_ok=True) 
         # Assuming you want to use the user's ID for the filename
             filename = f"{event.id}.{file.filename.rsplit('.', 1)[1].lower()}"  # Adjust extension as needed
             filepath = ('Tool/static/images/events/'+ filename)

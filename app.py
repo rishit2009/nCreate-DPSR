@@ -111,6 +111,7 @@ def _add_skills():
 
 
 @app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template('register.html')
@@ -120,28 +121,23 @@ def register():
         passw = request.form['password']
         desc = request.form['description']
 
-        new_user = User(name=name, email=email, password=passw, description = desc)
+        new_user = User(name=name, email=email, password=passw, description=desc)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
 
-        selected_skills = request.form.getlist('skills')  # Get the list of skills (both existing and new)
+        selected_skills = request.form.getlist('skills')
 
         for skill_data in selected_skills:
-            # If it's a number, it's an existing skill ID
             if skill_data.isdigit():
                 skill = db.session.get(Skill, int(skill_data))
             else:
-                # If not, it's a new skill (by name)
                 skill = Skill.query.filter_by(name=skill_data).first()
                 if not skill:
-                    # Add new skill to the database if it doesn't exist
                     skill = Skill(name=skill_data)
                     db.session.add(skill)
                     db.session.commit()
-            
             new_user.skills.append(skill)
-
 
         if 'profile_pic' not in request.files:
             flash('No file part')
@@ -150,23 +146,25 @@ def register():
             return redirect(request.url)
 
         file = request.files['profile_pic']
-    
+
         if file.filename == '':
             flash('No selected file')
             print('No selected file')
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
-        # Assuming you want to use the user's ID for the filename
-            filename = f"{new_user.id}.{file.filename.rsplit('.', 1)[1].lower()}"  # Adjust extension as needed
-            filepath = ('Tool/static/images/users/'+ filename)
-            file.save(filepath)
+            # Ensure the directory exists
+            user_image_dir = 'Tool/static/images/users/'
+            os.makedirs(user_image_dir, exist_ok=True)  # Create the directory if it doesn't exist
             
+            filename = f"{new_user.id}.{file.filename.rsplit('.', 1)[1].lower()}"
+            filepath = os.path.join(user_image_dir, filename)  # Construct the full file path
+            file.save(filepath)
+
             new_user.banner_color = get_average_color_hex(filepath)
-            new_user.profile_pic = '../static/images/users/' + filename  # Save the file path to the user's profile
+            new_user.profile_pic = f'../static/images/users/{filename}'  # Save the file path to the user's profile
             db.session.commit()
 
-            
         return redirect(url_for('index'))
 
 

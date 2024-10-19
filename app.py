@@ -9,32 +9,33 @@ from datetime import datetime
 
 def get_average_color_hex(image_path):
     # Open the image
-    with Image.open(image_path) as img:
-        # Resize image to a smaller size for faster processing (optional)
-        img = img.resize((50, 50))  # Resizing reduces the processing time
+    # with Image.open(image_path) as img:
+    #     # Resize image to a smaller size for faster processing (optional)
+    #     img = img.resize((50, 50))  # Resizing reduces the processing time
         
-        # Get the pixels of the image
-        pixels = img.getdata()
+    #     # Get the pixels of the image
+    #     pixels = img.getdata()
         
-        # Initialize variables to store the sum of RGB values
-        r_total = g_total = b_total = 0
-        pixel_count = len(pixels)
+    #     # Initialize variables to store the sum of RGB values
+    #     r_total = g_total = b_total = 0
+    #     pixel_count = len(pixels)
         
-        # Loop through each pixel and sum up the RGB values
-        for r, g, b in pixels:
-            r_total += r
-            g_total += g
-            b_total += b
+    #     # Loop through each pixel and sum up the RGB values
+    #     for r, g, b in pixels:
+    #         r_total += r
+    #         g_total += g
+    #         b_total += b
         
-        # Calculate the average RGB values
-        avg_r = r_total // pixel_count
-        avg_g = g_total // pixel_count
-        avg_b = b_total // pixel_count
+    #     # Calculate the average RGB values
+    #     avg_r = r_total // pixel_count
+    #     avg_g = g_total // pixel_count
+    #     avg_b = b_total // pixel_count
         
-        # Convert the average RGB values to hex format
-        avg_color_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
+    #     # Convert the average RGB values to hex format
+    #     avg_color_hex = "#{:02x}{:02x}{:02x}".format(avg_r, avg_g, avg_b)
         
-        return avg_color_hex
+    #     return avg_color_hex
+    return '#eb0037'
 
 
 
@@ -365,6 +366,14 @@ def remove(uid, cid):
     user.add_notification(f'You are no longer a member of {club.name}')
     db.session.commit()
     return redirect(url_for('view_clubs'))
+
+@app.route('/manage-club/<cid>')
+@login_required
+def manage_club(cid):
+    club = db.session.get(Club, cid)
+    if current_user not in club.managers:
+        return redirect(url_for('index'))
+    return render_template('manage_club.html' , club = club)
 
 
 @app.route('/leave/<cid>', methods=['POST'])

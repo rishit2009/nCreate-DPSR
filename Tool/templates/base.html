@@ -22,95 +22,95 @@
    
     <style>
       :root {
-  --text: #f7f3ec;
-  --background: #010101;
-  --primary: #eb0037;
-  --secondary: #0a9682;
-  --accent: #510b1c;
-}
+        --text: #f7f3ec;
+        --background: #010101;
+        --primary: #eb0037;
+        --secondary: #0a9682;
+        --accent: #510b1c;
+      }
 
-               /* width */
-         ::-webkit-scrollbar {
+      /* width */
+      ::-webkit-scrollbar {
          width: 2px;
          border-radius: 50%;
-         }
+      }
 
-         /* Track */
-         ::-webkit-scrollbar-track {
+      /* Track */
+      ::-webkit-scrollbar-track {
          background: #000;
-         }
+      }
 
-         /* Handle */
-         ::-webkit-scrollbar-thumb {
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
          background: #510b1c;
-         }
+      }
 
-         /* Handle on hover */
-         ::-webkit-scrollbar-thumb:hover {
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
          background: #670f25;
-         }
+      }
     </style>
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
     
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <!-- jQuery (required for Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Select2 CSS -->
-   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<!-- Select2 JS -->
-   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/assets/logo.png') }}">
 
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body class="bg-background">
    <header class="header" id="header">
-      <nav class="nav px-12">
-        <a href="#" class="nav__logo">Logo</a>
+      <nav class="nav px-12 items-center">
+        <a href="{{ url_for('index') }}" class="nav__logo"><img src="{{ url_for('static', filename='images/assets/logo.png') }}" alt="" class="h-24 w-24"></a>
     
         <div class="nav__menu" id="nav-menu">
           <ul class="nav__list">
             <li class="nav__item">
-              <a href="#" class="nav__link">
+              <a href="{{url_for('index')}}" class="nav__link">
                 <i class="ri-arrow-right-up-line"></i>
                 <span>Home</span>
               </a>
             </li>
     
             <li class="nav__item">
-              <a href="#" class="nav__link">
+              <a href="{{url_for('view_clubs')}}" class="nav__link">
                 <i class="ri-arrow-right-up-line"></i>
-                <span>About Us</span>
+                <span>Clubs</span>
               </a>
             </li>
     
             <li class="nav__item">
-              <a href="#" class="nav__link">
+              <a href="{{url_for('view_forums')}}" class="nav__link">
                 <i class="ri-arrow-right-up-line"></i>
-                <span>Projects</span>
+                <span>Forums</span>
               </a>
             </li>
     
             <li class="nav__item">
-              <a href="#" class="nav__link">
+              <a href="{{url_for('view_events')}}" class="nav__link">
                 <i class="ri-arrow-right-up-line"></i>
-                <span>Studio</span>
+                <span>Events</span>
               </a>
             </li>
-    
+
             <li class="nav__item">
-              <a href="#" class="nav__link">
+              <a href="{{url_for('learn')}}" class="nav__link">
                 <i class="ri-arrow-right-up-line"></i>
-                <span>Contact</span>
+                <span>Learn</span>
               </a>
             </li>
     
@@ -124,14 +124,14 @@
     
             <!-- User profile -->
             <li class="nav__item hello-bye">
-              <a href="{{url_for('user_profile', uid = current_user.id )}}" class="nav__link">
+              <a href="{{ url_for('user_profile', uid=current_user.id) }}" class="nav__link">
                 <ion-icon name="person-circle-outline"></ion-icon>
               </a>
             </li>
 
             {% else %}
             <li class="nav__item hello-bye">
-               <a href="{{url_for('login')}}" class="nav__link">
+               <a href="{{ url_for('login') }}" class="nav__link">
                  <button class="bg-text text-background rounded-full px-6 py-2 font-bold">
                      Login
                  </button>
@@ -155,41 +155,41 @@
     </header>
 
 
-<!-- Dialog Container -->
-<div id="notifModal" class="fixed inset-0 flex items-center justify-center z-50 scale-0 transition-all duration-300">
-  <!-- Background Overlay -->
+  <!-- Dialog Container -->
+  <div id="notifModal" class="fixed inset-0 flex items-center justify-center z-50 scale-0 transition-all duration-300">
+    <!-- Background Overlay -->
 
-  <!-- Dialog Box -->
-  <div class="relative bg-background w-11/12 max-w-lg p-6 rounded-lg shadow-lg z-10 transition-all">
-    <!-- Close Icon (Top Right) -->
-    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onclick="closeModal()">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
-
-    <!-- Title -->
-    <h2 class="text-xl font-semibold text-gray-200 mb-8">Notifications</h2>
-
-    <!-- Notification Content -->
-    <div class="space-y-2 text-center" id="notifs-container">
-      {% if not current_user.notifications %}
-      <p class="text-gray-300">There nothing here yet :( </p>
-      {% else %}
-      {% for notif in current_user.notifications %}
-      <p class="text-gray-200 hover:bg-gray-900 py-4">{{ notif }}</p>
-      {% endfor %}
-      {% endif %}
-    </div>
-
-    <!-- Clear Button -->
-    <div class="mt-8">
-      <button class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-red-600 bold" onclick="clear_notifications()">
-        Clear Notifications
+    <!-- Dialog Box -->
+    <div class="relative bg-background w-11/12 max-w-lg p-6 rounded-lg shadow-lg z-10 transition-all">
+      <!-- Close Icon (Top Right) -->
+      <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onclick="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
       </button>
+
+      <!-- Title -->
+      <h2 class="text-xl font-semibold text-gray-200 mb-8">Notifications</h2>
+
+      <!-- Notification Content -->
+      <div class="space-y-2 text-center" id="notifs-container">
+        {% if not current_user.notifications %}
+        <p class="text-gray-300">There is nothing here yet :( </p>
+        {% else %}
+        {% for notif in current_user.notifications %}
+        <p class="text-gray-200 hover:bg-gray-900 py-4">{{ notif }}</p>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <!-- Clear Button -->
+      <div class="mt-8">
+        <button class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-red-600 bold" onclick="clear_notifications()">
+          Clear Notifications
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
 
 <script>
@@ -223,7 +223,7 @@ function openModal() {
     .then(data => {
       console.log('Notifications cleared:', data);
       notifsc = document.getElementById('notifs-container');
-      notifsc.innerHTML = '<p class="text-gray-300">There nothing here yet :(</p>'
+      notifsc.innerHTML = '<p class="text-gray-300">There is nothing here yet :(</p>'
     })
     .catch(error => {
       console.error('There was a problem with the fetch operation:', error);
@@ -243,7 +243,7 @@ function openModal() {
     </footer>
 
 
-    <script src="../static/js/script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     
 </body>
 </html>

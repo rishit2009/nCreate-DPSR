@@ -1,50 +1,174 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Declare Results</title>
-</head>
-<body>
-    <h1>Declare Results for {{ event.name }}</h1>
+{% extends 'base.html' %}
 
-    <form method="POST">
+<!-- title -->
+{% block title %} Title {% endblock %}
+
+{% block content %}
+
+<style>
+    /* Form styling */
+    form {
+        width: 50%;
+        margin: auto;
+        background-color: #000;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    form:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        form {
+            width: 90%;
+            padding: 20px;
+        }
+    }
+
+    h1, h3 {
+        color: #fefefe;
+        margin-bottom: 20px;
+    }
+
+    /* Dropdown styling */
+    .participant-select {
+        width: 75%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #a1a1a1;
+        border-radius: 8px;
+        background-color: #000; /* Black background */
+        color: #fff; /* White text */
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+
+    .participant-select:focus {
+        border-color: var(--secondary);
+        outline: none;
+    }
+
+    /* Button styling */
+    button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: var(--text);
+        color: var(--background);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+        background-color: var(--background);
+        color: var(--text);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Custom styles for Select2 dropdown */
+    .select2-container .select2-selection {
+        background-color: #000; /* Black background */
+        color: #fff; /* White text */
+        border: 1px solid #a1a1a1; /* Light gray border */
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 12px;
+        height: 56px;
+    }
+
+    /* Styling the dropdown items */
+    .select2-container--default .select2-results__option {
+        background-color: #000; /* Black background for options */
+        color: #fff; /* White text */
+    }
+
+    /* When an option is highlighted */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: var(--secondary); /* Highlighted background */
+        color: #fff; /* White text */
+    }
+
+    /* Placeholder text color */
+    .select2-container--default .select2-selection__placeholder {
+        color: #a1a1a1 !important; /* Lighter gray placeholder */
+    }
+
+    /* Adjust dropdown arrow color */
+    .select2-container--default .select2-selection__arrow b {
+        border-color: #fff transparent transparent transparent !important; /* White arrow */
+    }
+
+    hr {
+        border-color: #a1a1a1;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
+
+
+<form method="POST" class="text-text">
+        <h1 class="text-2xl">Declare Results for {{ event.name }}</h1>
+        <hr>
         <div>
             {% for sub_event in event.sub_events %}
-                <h3>{{ sub_event.name }}</h3>
+                <h3 class="bold text-xl">{{ sub_event.name }}</h3>
                 
-                <!-- First Place Club -->
-                <label for="sub_event_{{ sub_event.id }}_first">First Place:</label>
-                <select name="sub_event_{{ sub_event.id }}_first" id="sub_event_{{ sub_event.id }}_first" required>
-                    <option value="" disabled selected>Select First Place Club</option>
-                    {% for club in sub_event.registered_clubs %}
-                        <option value="{{ club.id }}">{{ club.name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="flex items-center justify-between mb-4">
+                    <!-- First Place Club -->
+                    <label for="sub_event_{{ sub_event.id }}_first">First Place:</label>
+                    <select class="participant-select" name="sub_event_{{ sub_event.id }}_first" id="sub_event_{{ sub_event.id }}_first" required>
+                        <option value="" disabled selected>Select First Place Club</option>
+                        {% for club in sub_event.registered_clubs %}
+                            <option value="{{ club.id }}">{{ club.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 
                 <!-- Second Place Club -->
-                <label for="sub_event_{{ sub_event.id }}_second">Second Place:</label>
-                <select name="sub_event_{{ sub_event.id }}_second" id="sub_event_{{ sub_event.id }}_second" required>
-                    <option value="" disabled selected>Select Second Place Club</option>
-                    {% for club in sub_event.registered_clubs %}
-                        <option value="{{ club.id }}">{{ club.name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="flex items-center justify-between mb-4">
+                    <label for="sub_event_{{ sub_event.id }}_second">Second Place:</label>
+                    <select class="participant-select" name="sub_event_{{ sub_event.id }}_second" id="sub_event_{{ sub_event.id }}_second" required>
+                        <option value="" disabled selected>Select Second Place Club</option>
+                        {% for club in sub_event.registered_clubs %}
+                            <option value="{{ club.id }}">{{ club.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 
                 <!-- Third Place Club -->
-                <label for="sub_event_{{ sub_event.id }}_third">Third Place:</label>
-                <select name="sub_event_{{ sub_event.id }}_third" id="sub_event_{{ sub_event.id }}_third" required>
-                    <option value="" disabled selected>Select Third Place Club</option>
-                    {% for club in sub_event.registered_clubs %}
-                        <option value="{{ club.id }}">{{ club.name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="flex items-center justify-between mb-4">
+                    <label for="sub_event_{{ sub_event.id }}_third">Third Place:</label>
+                    <select class="participant-select" name="sub_event_{{ sub_event.id }}_third" id="sub_event_{{ sub_event.id }}_third" required>
+                        <option value="" disabled selected>Select Third Place Club</option>
+                        {% for club in sub_event.registered_clubs %}
+                            <option value="{{ club.id }}">{{ club.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <hr>
             {% endfor %}
         </div>
 
-        <button type="submit">Submit Results</button>
+        <button type="submit">Confirm</button>
     </form>
 
-    <a href="{{ url_for('index') }}">Back to Home</a>
-</body>
-</html>
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // Apply Select2 to all dropdowns
+        $(document).ready(function() {
+            $('.participant-select').select2({
+                placeholder: "Select an option",
+                allowClear: true
+            });
+        });
+    </script>
+
+{% endblock %}

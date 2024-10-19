@@ -180,6 +180,9 @@ class Club(db.Model):
 
 
     profile_pic = db.Column(db.String(200), nullable=False, default = '../static/images/default.jpg')
+    
+
+    email = db.Column(db.String(120), unique=True, nullable=False, default = 'none')
 
     description = db.Column(db.String, nullable = False)
 
@@ -247,7 +250,7 @@ class SubEvent(db.Model):
 
     def __repr__(self):
         return f'<SubEvent {self.name}, Type: {self.event_type}, Submission-based: {self.is_submission_based}>'
-
+ 
 
 # Submission model: linking clubs, sub-events, and submission links
 class Submission(db.Model):
@@ -268,16 +271,18 @@ class Submission(db.Model):
         return f'<Submission from Club {self.club_id} for SubEvent {self.sub_event_id}>'
 
 # Forum model
+# Forum model
 class Forum(db.Model):
     __tablename__ = 'forum'  # Table name
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String, nullable=False)
     comments = db.relationship('Comment', backref='forum', lazy=True)
     members = db.relationship('User', secondary=participants_forums, backref='forums')
+    profile_pic = db.Column(db.String(200), nullable=False, default='../static/images/default.jpg')
 
     def __repr__(self):
         return f'<Forum {self.name}>'
-    
 
 # Comment model
 class Comment(db.Model):
@@ -285,8 +290,13 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     forum_id = db.Column(db.Integer, db.ForeignKey('forum.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationship with the User model
+    user = db.relationship('User', backref='comments', lazy=True)
+    
     content = db.Column(db.Text, nullable=False)
     datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<Comment {self.content} by User {self.user_id} on Forum {self.forum_id}>'
+        return f'<Comment {self.content} by {self.user.username} on Forum {self.forum.name}>'
+

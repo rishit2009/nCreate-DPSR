@@ -1,10 +1,260 @@
 {% extends 'base.html' %}
 
-<!-- title -->
-{% block title %} Title {% endblock %}
+{% block title %} Forum Chat {% endblock %}
 
 {% block content %}
-<!-- html stuff here -->
+<style>
+    /* Main container for the chat system */
+    .chat-container {
+        margin: 2rem;
+        background-color: #111;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        height: 75vh;
+    }
 
-home
+    /* Chatbox that holds all messages */
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #333;
+        border-radius: 8px;
+        background-color: #222;
+        color: #fefefe;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+
+    /* Individual message styling */
+    .message {
+        margin-bottom: 10px;
+        padding: 0.75rem;
+        padding-right: 1rem;
+        border-radius: 8px;
+        background-color: #333;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+
+    /* User message (right-aligned) */
+    .message.user {
+        background-color: var(--primary);
+    }
+
+    /* Forum message (left-aligned) */
+    .message.forum {
+        background-color: #444;
+    }
+
+    /* Message form styling */
+    .chat-input {
+        display: flex;
+        gap: 12px;
+    }
+
+    .chat-input input[type="text"] {
+        flex-grow: 1;
+        padding: 12px;
+        border: 1px solid #555;
+        border-radius: 8px;
+        background-color: #222;
+        color: #fefefe;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .chat-input input[type="text"]:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+
+    .chat-input button {
+        padding: 12px 24px;
+        background-color: var(--primary);
+        color: var(--text);
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .chat-input button:hover {
+        background-color: #dc2626;
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        .chat-container {
+            height: 50vh;
+        }
+    }
+
+    .no-mem-msg {
+        flex-grow: 1;
+        padding: 12px;
+        border: 1px solid #555;
+        border-radius: 8px;
+        background-color: #222;
+        color: #a3a3a3;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        cursor: not-allowed;
+    }
+
+    .join-button {
+        padding: 12px 24px;
+        background-color: var(--primary);
+        color: var(--text);
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .join-button:hover {
+        background-color: #dc2626;
+    }
+
+    /* Flex container to align the profile picture, name, and datetime */
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+/* Profile picture styling */
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* Align username and date within the same row */
+.username {
+    flex-grow: 1;
+    font-weight: bold;
+    color: #fefefe;
+}
+
+/* Align date to the right */
+.datetime {
+    color: #c6c6c6;
+    font-size: 12px;
+}
+
+
+
+</style>
+
+<div class="flex ml-10 gap-8">
+    <img src="{{ forum.profile_pic}}" alt="" class="h-12 w-12 rounded-full">
+    <h1 class="text-3xl text-text">{{ forum.name }}</h1>
+</div>
+
+<!-- Chat container -->
+<div class="chat-container">
+    <!-- Chat box showing all messages -->
+    <div class="chat-box" id="comments-section">
+        <!-- Example message from a user -->
+        {% for comment in comments %}
+        <div class="comment message {{ 'forum' if comment.user_id == current_user.id else 'forum' }}">
+            <div class="message-header gap-4">
+                <img src="{{ comment.user.profile_pic }}" alt="{{ comment.user.name }}'s profile picture" class="profile-pic">
+                <strong class="username">{{ comment.user_id == current_user.id and '' or comment.user.name }}</strong>
+                <small class="datetime">{{ comment.datetime.strftime('%d %B, %I:%M %p') }}</small>
+
+            </div>
+            <p class="mt-2">{{ comment.content }}</p>
+        </div>
+        
+        
+        {% endfor %}
+    </div>
+
+    {% if current_user in forum.members %}
+        <form class="chat-input" action="{{ url_for('comment', fid=forum.id) }}" method="POST" id="comment-form">
+            <!-- If the user is a member, allow message input and show the send button -->
+            <input type="text" id="comment" name="comment" placeholder="Type your message..." autocomplete="off" required>
+            <button type="submit">Send</button>
+        </form>
+    {% else %}
+        <!-- If the user is not a member, disable the input and show a message with a join button -->
+        <div class="flex items-center gap-4">
+            <p class="no-mem-msg">You must be a member to send messages.</p>
+            <form action="{{ url_for('join_forum', fid=forum.id) }}" method="POST">
+                <button type="submit" class="join-button">Join</button>
+            </form>
+        </div>
+    {% endif %}
+    
+    
+
+</div>
+
+<script>
+    function scrollToBottom() {
+        const chatBox = document.getElementById('comments-section');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Auto-scroll when the page loads
+    scrollToBottom();
+
+    document.getElementById('comment-form').addEventListener('submit', function(e) {
+        e.preventDefault();  // Prevent default form submission
+        
+        // Get the comment content
+        const content = document.getElementById('comment').value;
+
+        // Send an AJAX POST request to the server
+        fetch('{{ url_for("comment", fid=forum.id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // Include CSRF token for protection
+            },
+            body: JSON.stringify({ content: content })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Append the new comment to the comments section
+                const commentsSection = document.getElementById('comments-section');
+                const newComment = document.createElement('div');
+                newComment.classList.add('comment');
+                newComment.classList.add('message');
+                newComment.classList.add('forum');
+                newComment.innerHTML = `
+            <div class="message-header gap-4">
+                <img src="${data.user.profile_pic}" alt="${data.user.name}'s profile picture" class="profile-pic">
+                <strong class="username">${data.user.username}</strong>
+                <small class="datetime">${data.comment.datetime}</small>
+            </div>
+            <p class="mt-2">${data.comment.content}</p>
+        `;
+                commentsSection.appendChild(newComment);
+                scrollToBottom()
+
+                // Clear the form
+                document.getElementById('comment').value = '';
+            } else {
+                alert('Error adding comment');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+
+
 {% endblock %}

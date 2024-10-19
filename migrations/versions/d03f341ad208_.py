@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 0b266b7b2f99
+Revision ID: d03f341ad208
 Revises: 
-Create Date: 2024-10-17 17:16:48.607171
+Create Date: 2024-10-19 03:24:58.258067
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0b266b7b2f99'
+revision = 'd03f341ad208'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,13 +26,16 @@ def upgrade():
     sa.Column('bronzes', sa.Integer(), nullable=True),
     sa.Column('total', sa.Integer(), nullable=True),
     sa.Column('profile_pic', sa.String(length=200), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('name')
     )
     op.create_table('forum',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=200), nullable=False),
+    sa.Column('description', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('skill',
@@ -49,7 +52,6 @@ def upgrade():
     sa.Column('prompts_date', sa.DateTime(), nullable=True),
     sa.Column('submission_date', sa.DateTime(), nullable=True),
     sa.Column('event_date', sa.DateTime(), nullable=True),
-    sa.Column('result_date', sa.DateTime(), nullable=True),
     sa.Column('brochure_link', sa.String(length=255), nullable=True),
     sa.Column('profile_pic', sa.String(length=200), nullable=False),
     sa.Column('description', sa.String(), nullable=False),

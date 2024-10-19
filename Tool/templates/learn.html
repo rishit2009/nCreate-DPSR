@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+<!-- title -->
+{% block title %} Learn {% endblock %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="../static/css/learn.css">
+
+    <!-- Heading -->
+    <div class="text-heading">
+      <div class="hello-bye">Wanna <span class="auto-type"></span></div>
+    </div>
+
+    <!-- Card Container -->
+    <div class="container">
+        <div class="card__container">
+            <article class="card__article">
+                <div class="card__scale-1"></div>
+                <div class="card__scale-2"></div>
+
+                <div class="card__shape-1">
+                    <div class="card__shape-2"></div>
+                    <div class="card__shape-3">
+                        <i class="ri-flashlight-line card__icon"></i>
+                    </div>
+                </div>
+
+                <div class="card__data">
+                    <h2 class="card__title">Competitive Programming</h2>
+                    <p class="card__description">
+                        Give you the right tutorial to Excel in the field of CP.
+                    </p>
+                    <a href="{{ url_for('learncp')}}" class="card__button">
+                        Get Started
+                    </a>
+                </div>
+            </article>
+
+            <article class="card__article card__orange">
+                <div class="card__scale-1"></div>
+                <div class="card__scale-2"></div>
+
+                <div class="card__shape-1">
+                    <div class="card__shape-2"></div>
+                    <div class="card__shape-3">
+                        <i class="ri-fire-line card__icon"></i>
+                    </div>
+                </div>
+
+                <div class="card__data">
+                    <h2 class="card__title">Web Development</h2>
+                    <p class="card__description">
+                        Give you the right tutorial to Excel in the field of Web Development.
+                    </p>
+                    <a href="{{ url_for('learnwebd')}}" class="card__button">
+                        Get Started
+                    </a>
+                </div>
+            </article>
+
+            <article class="card__article card__green">
+                <div class="card__scale-1"></div>
+                <div class="card__scale-2"></div>
+
+                <div class="card__shape-1">
+                    <div class="card__shape-2"></div>
+                    <div class="card__shape-3">
+                        <i class="ri-shining-line card__icon"></i>
+                    </div>
+                </div>
+
+                <div class="card__data">
+                    <h2 class="card__title">AV Editing</h2>
+                    <p class="card__description">
+                        Give you the right tutorial to Excel in the field of AV Editing.
+                    </p>
+                    <a href="{{ url_for('learnav')}}" class="card__button">
+                        Get Started
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script>
+      var typed = new Typed(".auto-type", {
+         strings : ["Learn?", "Excel?", "Win?", "Earn Podiums?"],
+         typeSpeed : 150,
+         backSpeed : 150,
+         looped : true
+      })
+    </script>
+
+
+{% endblock %}

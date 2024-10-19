@@ -4,7 +4,7 @@
 {% block title %} Club - {{ club.name }} {% endblock %}
 
 {% block content %}
-<div class="bg-background text-text font-sans">
+<div class="bg-background text-text font-sans pb-16">
 
     <!-- Header Section -->
     <header class="bg-gradient-to-r from-primary to-accent p-8 flex items-center justify-between text-center">
@@ -20,18 +20,23 @@
                 </div>
             </div>
         </div>
-        <button class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover">Join Club</button>
+        {% if current_user not in club.members %}
+        <form action="{{url_for('request_club' , cid = club.id)}}">
+        <button class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover" type="submit">Join Club</button>
+        </form>
+        {% endif %}
     </header>
 
     <!-- About Section -->
-    <section class="p-8 mt-8">
-        <h2 class="text-4xl font-semibold mb-6">About Us</h2>
-        <p class="max-w-prose">{{ club.description }}</p>
+    <section class="p-8 mt-4">
+        <h2 class="text-3xl font-semibold mb-6">About Us</h2>
+        <p class="max-w-prose text-xl">{{ club.description }}</p>
     </section>
 
     <!-- Events Section -->
-    <section class="p-8 mt-8">
-        <h2 class="text-4xl font-semibold mb-6">Events</h2>
+    <section class="p-8 mt-4">
+        <h2 class="text-3xl font-semibold mb-6">Events</h2>
+        {% if club.events|length %}
         <ul class="space-y-4">
             {% for event in club.events %}
             <li class="bg-primary text-white p-4 rounded-lg shadow-md">
@@ -41,20 +46,33 @@
             </li>
             {% endfor %}
         </ul>
+        {% else %}
+        <p class="text-gray-400 text-xl">
+            Theres nothing here yet :(
+        </p>
+        {% endif %}
     </section>
 
     <!-- Members Section -->
-    <section class="p-12 mt-8">
-        <h2 class="text-4xl font-bold mb-6 text-accent">Members</h2>
+    <section class="p-8 mt-4">
+        <h2 class="text-3xl mb-6 text-text font-semibold">Members</h2>
         <ul class="space-y-8">
             {% for member in club.members %}
             <li class="flex items-center space-x-6 animate-fadeInUp transform transition-all duration-300 member">
                 <img src="{{ member.profile_pic }}" alt="{{ member.name }}" class="w-14 h-14 rounded-full">
-                <span class="text-xl text-primary">{{ member.name }}</span>
+                <a class="text-xl text-text hover:underline" href="{{url_for('user_profile', uid=member.id)}}">{{ member.name }}</a>
                 <div class="ml-auto text-sm opacity-75">{{ member.role }}</div>
             </li>
             {% endfor %}
         </ul>
+    </section>
+
+    <section class="p-8 mt-4">
+        <h2 class="text-3xl mb-6 text-text font-semibold">Contact</h2>
+        <p class="text-xl">
+            <strong>Email :</strong>
+            {{ club.email }}
+        </p>
     </section>
 
 

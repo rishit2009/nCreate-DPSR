@@ -261,9 +261,8 @@ def club(cid):
         User.club_id == cid  # Filter by the club ID
     ).all()
 
-    print(won_sub_events)
 
-    return render_template('club.html', club=club)
+    return render_template('club.html', club=club, wse = won_sub_events)
 
 
 @app.route('/accept/<uid>/<cid>', methods=['POST'])
@@ -402,15 +401,14 @@ def create_club():
         # Get form data
         name = request.form['name']
         description = request.form['description']
+        email = request.form['email']
 
         # Create a new club and associate the current user as a manager and member
-        club = Club(name=name, description=description)
+        club = Club(name=name, description=description, email=email)
         club.managers.append(current_user)
         club.members.append(current_user)
         db.session.add(club)
         db.session.commit()
-
-        print([(k ,i) for k,i in request.files.items()])
 
         # Handle file upload for the profile picture
         if 'profile_pic' not in request.files:
@@ -492,27 +490,74 @@ def join_forum(fid):
 @app.route('/comment/<fid>', methods=['POST'])
 @login_required
 def comment(fid):
-    content = request.form['comment']
+    forum = Forum.query.get_or_404(fid)
+
+    # Get the comment content from the AJAX request
+    data = request.get_json()
+    content = data.get('content')
+
     if not content:
-        return "Comment cannot be empty", 400
-    
-    comment = Comment(content=content, forum_id=fid, user_id=current_user.id)
+        return jsonify({'success': False, 'error': 'No content provided'}), 400
+
+    # Create a new comment
+    comment = Comment(
+        forum_id=forum.id,
+        user_id=current_user.id,
+        content=content,
+        datetime=datetime.now()  
+    )
+
+    # Save the comment to the database
     db.session.add(comment)
     db.session.commit()
-    return redirect(url_for('view_forum', fid=fid))
+
+    # Return the comment as JSON response
+    return jsonify({
+        'success': True,
+        'comment': {
+            'content': comment.content,
+            'datetime': comment.datetime.strftime('%d %B, %I:%M %p')
+        },
+        'user': {
+            'username': current_user.name,
+            'profile_pic' : current_user.profile_pic
+        }
+    })
 
 
 @app.route('/create-forum', methods=['GET', 'POST'])
 @login_required
 def create_forum():
     if request.method == 'GET':
-        return render_template('create_forum.html')
+        return render_template('create_forum.html') 
     elif request.method == 'POST':
         name = request.form['name']
-        forum = Forum(name=name)
+        desc = request.form['description']
+        forum = Forum(name=name, description=desc)
         forum.members.append(current_user)
         db.session.add(forum)
         db.session.commit()
+
+        if 'profile_pic' not in request.files:
+            print('No file part')
+            return redirect(request.url)
+        
+        file = request.files['profile_pic']
+        
+        if file.filename == '':
+            print('No selected file')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            filename = (f"{forum.id}.{file.filename.rsplit('.', 1)[1].lower()}")
+            filepath = os.path.join('Tool/static/images/forums/', filename)
+            
+            # Save the file to the desired path
+            file.save(filepath)
+            
+            # Update the club's profile_pic field
+            forum.profile_pic = '../static/images/forums/' + filename
+            db.session.commit()
         return redirect(url_for('view_forum', fid=forum.id))
 
 
@@ -665,9 +710,9 @@ def submit(eid, sid):
     event = db.session.get(Event, eid)
     s_event = db.session.get(SubEvent, sid)
     if request.method == 'GET':
-        if (current_user not in s_event.registered_users):
-            current_user.add_notification('You must be registered for an event to submit.')
-            return redirect(url_for('index'))
+        # if (current_user not in s_event.registered_users):
+        #     current_user.add_notification('You must be registered for an event to submit.')
+            # return redirect(url_for('index'))
         return render_template('submit.html', event = event, sub_event = s_event)
     if request.method == 'POST':
         sub_link = request.form['submission_link']
@@ -688,15 +733,17 @@ def submit(eid, sid):
 @login_required
 def declare_result(eid):
     event = db.session.get(Event, eid)
+    club = db.session.get(Club, current_user.club_id)
     if request.method == 'GET':
-        return render_template('declare_result.html')
-    elif request.method == 'POST':
-        club = db.session.get(Club, current_user.club_id)
         if current_user.club_id != event.host_id:
+            current_user.add_notification('You must be a manager of the host club to declare results')
             return redirect(url_for('index'))
         if current_user not in club.managers:
             current_user.add_notification('You must be a manager of the host club to declare results')
             return redirect(url_for('index'))
+        return render_template('declare_result.html', event= event)
+    elif request.method == 'POST':
+    
         
         for sub_event in event.sub_events:
             # Set the club IDs for the winners from the form data
@@ -760,8 +807,21 @@ def search_skills():
 
 
 
-
+@app.route('/learn')
+def learn():
+    return render_template('learn.html')
         
+@app.route('/learn/cp')
+def learncp():
+    return render_template('learncp.html')
+
+@app.route('/learn/webd')
+def learnwebd():
+    return render_template('learnwebd.html')
+
+@app.route('/learn/av')
+def learnav():
+    return render_template('learnav.html')
         
      
 

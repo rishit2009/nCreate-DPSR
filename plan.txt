@@ -27,6 +27,4 @@ user profile - leetcode style
 
 to do:-
 
-club display (link and minor improovements)
-event stuff (view, submit, register, results)
-forums(view, list)
+manage club

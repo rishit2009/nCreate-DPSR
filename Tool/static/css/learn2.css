@@ -1,0 +1,217 @@
+/*========== GOOGLE FONTS ==========*/ 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+
+/*========== VARIABLES CSS ==========*/
+:root {
+  /*========== Colors ==========*/
+  --first-color: #eb0037; /* Updated to primary theme color */
+  --second-color: #0a9682; /* Updated to secondary theme color */
+  --body-color: #130f07; /* Updated to background theme color */
+  --title-color: #f7f3ec; /* Updated to text theme color */
+  --text-color: #510b1c; /* Updated to accent theme color */
+
+  /*========== Font and typography ==========*/
+  --body-font: 'Montserrat', sans-serif;
+  --normal-font-size: .938rem;
+  --h3-font-size: 1.125rem;
+  --small-font-size: .75rem;
+}
+
+@media screen and (min-width: 968px) {
+  :root {
+    --normal-font-size: 1rem;
+    --h3-font-size: 1.25rem;
+    --small-font-size: .813rem;
+  }
+}
+
+/*========== BASE ==========*/
+*,::before,::after{
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  background-color: var(--body-color); /* Background updated */
+  color: var(--text-color); /* Text color updated */
+}
+
+h3{
+  margin: 0;
+  color: var(--title-color); /* Title color updated */
+}
+
+a{
+  text-decoration: none;
+}
+
+img{
+  max-width: 100%;
+  height: auto;
+}
+
+.randomContainer{
+  max-width: 968px;
+  width: calc(100% - 3rem);
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+/*========== CARD GLASS ==========*/
+.randomSection{
+  position: relative;
+  overflow: hidden;
+  padding: 3rem 0;
+  background-color: var(--body-color);
+}
+
+.randomContainer{
+  display: grid;
+  gap: 1.5rem;
+}
+
+.randomGlass{
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 2.5rem;
+  background: linear-gradient(130deg,
+              rgba(251,251,254,.6),
+              rgba(251,251,254,.2));
+  box-shadow: inset 2px 2px 1px rgba(251,251,254,.3)
+              inset -2px -2px 1px rgba(251,251,254,.2);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease-in-out;
+}
+
+.randomGlass:hover {
+  transform: scale(1.1);
+}
+
+.randomImg{
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #F4F4FB;
+  margin-bottom: 1rem;
+}
+
+.randomData{
+  margin-bottom: 1.5rem;
+}
+
+.randomTitle{
+  font-size: var(--h3-font-size);
+  color: var(--title-color);
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+
+.randomProfession{
+  font-size: var(--small-font-size);
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.randomButton{
+  display: inline-block;
+  background-color: #130f07;
+  padding: .75rem 1.5rem;
+  border-radius: .5rem;
+  color: var(--title-color);
+  font-weight: 500;
+  transition: .4s;
+}
+
+.randomButton:hover{
+  background: var(--second-color)
+}
+
+.randomSocial{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.randomLink{
+  display: block;
+  font-size: 1.35rem;
+  color: var(--title-color);
+  margin: 1rem 0;
+  transform: translateX(-5rem);
+}
+
+.randomLink:nth-child(1){
+  transition: .2s;
+}
+.randomLink:nth-child(2){
+  transition: .5s;
+}
+.randomLink:nth-child(3){
+  transition: .7s;
+}
+
+.randomGlass:hover .randomLink{
+  transform: translateX(-1.5rem);
+}
+
+.randomCircle{
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(130deg,
+              rgba(235,0,55,.8), /* Primary color updated */
+              rgba(255,255,255,.2));
+  border-radius: 50%;
+}
+
+.circleOne{
+  top: 20%;
+  left: -20%;
+}
+
+.circleTwo{
+  bottom: -5%;
+  right: -25%;
+  background: linear-gradient(130deg,
+              rgba(10,150,130,.8), /* Secondary color updated */
+              rgba(255,255,255,.2));
+}
+
+/*========== MEDIA QUERIES ==========*/
+@media screen and (min-width: 568px){
+  .randomContainer{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 768px){
+  .randomContainer{
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .randomSection{
+    padding: 0;
+  }
+
+  .randomContainer{
+    height: 100vh;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: center;
+  }
+
+  .circleOne{
+    left: 5%;
+    top: 12%;
+  }
+
+  .circleTwo{
+    right: 8%;
+    bottom: 15%;
+  }
+}

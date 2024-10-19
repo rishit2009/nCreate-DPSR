@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+<!-- title -->
+{% block title %} {{ event.name }} Event {% endblock %}
+
+{% block content %}
+
+<style>
+  
+</style>
+
+<!-- Header Section with gradient background -->
+<header class="bg-gradient-to-r from-primary to-accent p-8 flex items-center justify-between">
+  <div class="flex items-center space-x-6">
+    <!-- Event Image with hover effect -->
+    <img class="h-32 w-32 rounded-full border-4 border-background relative z-10 transition-transform transform hover:scale-125 duration-500" src="{{ event.profile_pic }}" alt="Event picture">
+    <div class="flex flex-col">
+      <h1 class="text-6xl font-extrabold tracking-wide text-text">{{ event.name }}</h1>
+      <p class="text-2xl mt-4 text-text">Hosted by: 
+        <a href="{{url_for('club', cid = event.host.id )}}" class="hover:underline">
+          {{ event.host.name }}
+        </a>
+      </p>
+    </div>
+  </div>
+  <!-- Register button -->
+  {% if current_user not in event.participants %}
+  <a class="px-8 py-3 bg-secondary text-text font-bold rounded-lg btn-hover" href="{{url_for('register_event', eid= event.id)}}">
+    Register for Event
+  </a>
+  {% endif %}
+</header>
+
+<!-- Event Container -->
+<div class="relative max-w-4xl mx-auto mt-8 p-8 bg-background border-white border-2 rounded-lg shadow-lg">
+
+  <!-- About Section -->
+  <section class="mb-6 text-text">
+    <h2 class="text-4xl font-semibold mb-6">About the Event</h2>
+    <p class="text-lg leading-relaxed">
+      {{ event.description }}
+    </p>
+  </section>
+
+  <!-- Important Dates Section -->
+  <section class="mb-6">
+    <h2 class="text-4xl font-semibold mb-6 text-text">Important Dates</h2>
+    <ul class="text-lg text-gray-300">
+      <li><strong>Registration Ends:</strong> {{ event.registration_end_date.strftime('%B %d, %Y') if event.registration_end_date else 'TBA' }}</li>
+      <li><strong>Prompts Release:</strong> {{ event.prompts_date.strftime('%B %d, %Y') if event.prompts_date else 'TBA' }}</li>
+      <li><strong>Submission Deadline:</strong> {{ event.submission_date.strftime('%B %d, %Y') if event.submission_date else 'TBA' }}</li>
+      <li><strong>Event Date:</strong> {{ event.event_date.strftime('%B %d, %Y') if event.event_date else 'TBA' }}</li>
+    </ul>
+  </section>
+
+  <!-- Brochure Link Section -->
+  {% if event.brochure_link %}
+  <section class="mb-6">
+    <h2 class="text-4xl font-semibold mb-6 text-text">Event Brochure</h2>
+    <a href="https://{{ event.brochure_link }}" target="_blank" class="text-primary underline">
+      Event Brochure
+    </a>
+  </section>
+  {% endif %}
+
+  <!-- Sub-Events Section -->
+  <section class="mb-6">
+    <h2 class="text-4xl font-semibold mb-6 text-text">Sub-Events</h2>
+    {% if event.sub_events|length %}
+    <ul class="text-lg text-text space-y-4">
+      {% for sub_event in event.sub_events %}
+      <li class="flex items-center gap-2 text-2xl font-semibold">
+        {{ sub_event.name }} 
+        <button class="text-primary hover:text-accent" onclick="document.getElementById('subEventModal-{{ sub_event.id }}').classList.remove('scale-0')">
+          <ion-icon name="information-circle-outline" class="pt-3"></ion-icon>
+        </button>
+      </li>
+  
+      <div id="subEventModal-{{ sub_event.id }}" class="fixed inset-0 bg-opacity-0 flex items-center justify-center z-50 scale-0 transition-transform duration-300" >
+        <!-- Dialog Box -->
+        <div class="relative bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full">
+          
+          <!-- Close Icon (Top Right) -->
+          <button class="absolute top-3 right-3 text-gray-400 hover:text-white" onclick="document.getElementById('subEventModal-{{ sub_event.id }}').classList.add('scale-0')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+      
+          <!-- Title -->
+          <h2 class="text-xl font-semibold text-gray-100 mb-4"></h2>
+      
+          <!-- Sub-Event Content -->
+          <div class="space-y-4">
+            <p class="text-text text-xl"><strong>{{ sub_event.name }}</strong></p>
+            <p class="text-text text-lg">No. Of Participants: {{ sub_event.participant_count }}</p>
+            <p class="text-gray-500 text-lg"> {{ sub_event.description }}</p>
+      
+            <!-- Flex container to place Event Type and Submission Based side by side -->
+            <div class="flex justify-between">
+              <p class="text-gray-300 text-lg capitalize"><strong>Mode:</strong> {{ sub_event.event_type }}</p>
+              <p class="text-gray-300 text-lg"><strong>Submission :</strong> {{ 'Yes' if sub_event.is_submission_based else 'No' }}</p>
+            </div>
+        
+            <!-- Winner Clubs -->
+            <div class="flex space-x-8 justify-between text-center mt-16">
+              <div>
+                <p class="text-gray-300 text-lg">
+                  <strong>1st:</strong> 
+                  {{ sub_event.first_place_club.name if sub_event.first_place_club else 'TBD' }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-300 text-lg"><strong>2nd:</strong>
+                  {{ sub_event.second_place_club.name if sub_event.second_place_club else 'TBD' }}</p>
+              </div>
+              <div>
+                <p class="text-gray-300 text-lg"><strong>3rd:</strong>
+                  {{ sub_event.third_place_club.name if sub_event.third_place_club else 'TBD' }}</p>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Close Button -->
+          <div class="mt-8 text-center">
+            <button class="bg-primary text-white py-2 w-full px-8 rounded-md hover:bg-red-600 font-bold transition-colors" onclick="document.getElementById('subEventModal-{{ sub_event.id }}').classList.add('scale-0')">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        // Get elements
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalBtnBottom = document.getElementById('closeModalBtnBottom');
+        const modal = document.getElementById('subEventModal');
+      
+        // Open modal
+        openModalBtn.addEventListener('click', () => {
+          modal.classList.remove('hidden');
+        });
+      
+        // Close modal (top-right button)
+        closeModalBtn.addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+      
+        // Close modal (bottom close button)
+        closeModalBtnBottom.addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+      
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.add('hidden');
+          }
+        });
+      </script>
+      <!-- End of Modal -->
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-text">No sub-events available for this event.</p>
+    {% endif %}
+  </section>
+  
+  <!-- Contact Section -->
+  <section class="mb-6 text-text">
+    <h2 class="text-4xl font-semibold mb-6">Contact Host</h2>
+    <ul class="text-lg">
+      <li><strong>Email:</strong> {{ event.host.email }}</li>
+    </ul>
+  </section>
+
+  <!-- Current User Options -->
+  {% if current_user in event.participants %}
+  <div>
+    <a class="flex gap-2 my-4 text-red-600 items-center" href="{{ url_for('unregister_event', event_id=event.id) }}">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Unregister from Event
+    </a>
+  </div>
+  {% endif %}
+  
+</div>
+
+{% endblock %}

@@ -265,6 +265,8 @@ def club(cid):
     return render_template('club.html', club=club, wse = won_sub_events)
 
 
+
+
 @app.route('/accept/<uid>/<cid>', methods=['POST'])
 @login_required
 def accept(uid, cid):

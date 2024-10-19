@@ -30,6 +30,11 @@
   }
 }
 
+@font-face {
+  font-family: 'Satoshi';
+  src: url('../Satoshi-Variable.ttf');
+}
+
 /*=============== BASE ===============*/
 * {
   box-sizing: border-box;
@@ -42,7 +47,7 @@ html {
 }
 
 body {
-  font-family: var(--body-font);
+  font-family: 'Satoshi' !important;
   font-size: var(--normal-font-size);
   background-color: var(--white-color);
 }

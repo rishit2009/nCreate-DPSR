@@ -1,10 +1,121 @@
 {% extends 'base.html' %}
 
 <!-- title -->
-{% block title %} Title {% endblock %}
+{% block title %} Home {% endblock %}
 
 {% block content %}
-<!-- html stuff here -->
+<main class="container mx-auto text-text">
+    <section class="w-full p-8 flex items-center justify-between gap-12 rounded-lg mt-12">
+        <div class="space-y-8 max-w-[520px] flex flex-col">
+            <h1 class="text-5xl font-bold">
+                The future of the <span class="block text-primary">Delhi Tech Circuit</span>
+            </h1>
+            <p class="text-lg text-gray-300">
+                Connect and collaborate with tech clubs across Delhi through our platform. Streamline event management, share resources, and foster a thriving tech community. Together, we're building a dynamic ecosystem that empowers tech enthusiasts and drives innovation in Delhi's tech landscape.
+            </p>
+    
+           <a href="{{url_for('login')}}" class="bg-text text-background max-w-32 rounded-full font-bold py-3 text-center">Get Started</a>
+        </div>  
 
-home
+        <img src="../static/images/assets/home.jpg" class="rounded-lg w-1/2">
+    </section>
+
+    <div class="w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full">
+            <path fill="#eb0037" fill-opacity="0.1" d="M0,160L48,176C96,192,192,224,288,224C384,224,480,192,576,181.3C672,171,768,181,864,181.3C960,181,1056,171,1152,170.7C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+    <section id="features" class="py-16 bg-primary bg-opacity-10">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold mb-12 text-center">Key Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-background p-8 rounded-lg shadow-lg transition duration-300 hover:shadow-2xl hover:scale-105 border-2 border-primary relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-primary bg-opacity-10 transform rotate-45 translate-x-8 -translate-y-8"></div>
+                    <div class="relative z-10">
+                        <div class="bg-primary bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <ion-icon name="people-outline" class="text-4xl text-primary"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4">Club Collaboration</h3>
+                        <p class="text-gray-300">Connect with other tech clubs, share resources, and organize joint events to foster a thriving tech community.</p>
+                        <div class="mt-6">
+                            <a href="{{url_for('view_clubs')}}" class="text-primary hover:text-opacity-80 inline-flex items-center group">
+                                Explore
+                                <ion-icon name="arrow-forward-outline" class="ml-2 transition-transform duration-300 group-hover:translate-x-1"></ion-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-background p-8 rounded-lg shadow-lg transition duration-300 hover:shadow-2xl hover:scale-105 border-2 border-secondary relative overflow-hidden">
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-secondary bg-opacity-10 rounded-full transform -translate-x-16 translate-y-16"></div>
+                    <div class="relative z-10">
+                        <div class="bg-secondary bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <ion-icon name="calendar-outline" class="text-4xl text-secondary"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4">Event Management</h3>
+                        <p class="text-gray-300">Streamline event planning, promotion, and ticketing for tech meetups and workshops with our intuitive tools.</p>
+                        <div class="mt-6">
+                            <a href="{{url_for('view_events')}}" class="text-secondary hover:text-opacity-80 inline-flex items-center group">
+                                Discover
+                                <ion-icon name="arrow-forward-outline" class="ml-2 transition-transform duration-300 group-hover:translate-x-1"></ion-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-background p-8 rounded-lg shadow-lg transition duration-300 hover:shadow-2xl hover:scale-105 border-2 border-primary relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-40 h-40 bg-primary bg-opacity-10 transform -rotate-45 -translate-x-20 -translate-y-20"></div>
+                    <div class="relative z-10">
+                        <div class="bg-accent bg-opacity-10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <ion-icon name="school-outline" class="text-4xl text-primary"></ion-icon>
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-4">Resource Sharing</h3>
+                        <p class="text-gray-300">Access a wealth of tech resources, tutorials, and learning materials to accelerate your growth and knowledge.</p>
+                        <div class="mt-6">
+                            <a href="{{url_for('view_forums')}}" class="text-primary hover:text-opacity-80 inline-flex items-center group">
+                                Learn More
+                                <ion-icon name="arrow-forward-outline" class="ml-2 transition-transform duration-300 group-hover:translate-x-1"></ion-icon>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full">
+            <path fill="#eb0037" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,176C384,192,480,192,576,181.3C672,171,768,149,864,149.3C960,149,1056,171,1152,181.3C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+        </svg>
+    </div>
+
+    <!--- Testimonial Section -->
+    <section class="flex justify-center min-h-screen items-center relative overflow-hidden">
+
+        <!-- Blurred Blob SVG -->
+        <div class="absolute inset-0 flex justify-center items-center">
+            <svg width="492.6" height="400" viewBox="0 0 585 475" fill="none" xmlns="http://www.w3.org/2000/svg" class="blur-[100px]">
+                <path id='blurred-blob' d="M59.6878 70.4072C2.64247 112.7 -16.8108 220.14 15.7866 303.15C34.714 338.439 85.6079 417.473 137.764 451.308C202.958 493.601 346.492 482.305 380.666 392.728C414.841 303.151 608.848 251.138 582.56 142.122C556.271 33.1053 429.562 31.2664 323.621 6.83623C217.68 -17.5939 116.733 28.1141 59.6878 70.4072Z" fill="#B071FF"/>
+            </svg>
+        </div>
+    
+        <!-- Testimonial Content -->
+        <div class="relative z-10 bg-white/10 backdrop-blur-sm w-full p-8 rounded-lg shadow-lg max-w-[70rem]">
+          <svg class='w-[40px]' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#510b1c" d="M0 216C0 149.7 53.7 96 120 96l8 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-8 0c-30.9 0-56 25.1-56 56l0 8 64 0c35.3 0 64 28.7 64 64l0 64c0 35.3-28.7 64-64 64l-64 0c-35.3 0-64-28.7-64-64l0-32 0-32 0-72zm256 0c0-66.3 53.7-120 120-120l8 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-8 0c-30.9 0-56 25.1-56 56l0 8 64 0c35.3 0 64 28.7 64 64l0 64c0 35.3-28.7 64-64 64l-64 0c-35.3 0-64-28.7-64-64l0-32 0-32 0-72z"/></svg>
+            <p class="text-xl text-white leading-relaxed mb-4">
+                Joining this platform has completely transformed the way I connect with others and manage events. The seamless event management tools and vibrant community make it so easy to network with like-minded individuals. I also love the forums, where I can learn from and contribute to discussions on web development and programming. It's a great space for skill-building, thanks to the well-organized learning library. Highly recommend it for anyone looking to grow and connect!
+            </p>
+            <div class="flex flex-col mt-4">
+                    <h4 class="font-semibold">John Doe</h4>
+                    <p class="text-gray-300">Executive Member, XINO</p>
+            </div>
+        </div>
+    <style>
+                @keyframes colorChange {
+        0%, 100% { fill: rgb(235 0 55); }
+        50% { fill: rgb(10 150 130); }
+    }
+
+    path#blurred-blob {
+        animation: colorChange 8s infinite linear;
+    }
+    </style>
+    </section>
 {% endblock %}
